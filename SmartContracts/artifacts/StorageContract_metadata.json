@@ -1,0 +1,132 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "Devices",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "public_key",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "created",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "SensorDataList",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "public_key",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "created",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tx_index",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_cid",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_url",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_timestamp",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_signature",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_public_key",
+						"type": "bytes"
+					}
+				],
+				"name": "newData",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"StorageContract.sol": "StorageContract"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"StorageContract.sol": {
+			"keccak256": "0xd7bb6c1976affebec231be59fd1c45f743f005f62938574dc7bca695232f8788",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://8648b52bba5de7363bb17d7d513a8e35332522f48178d30eaeb303c0bc90eeac",
+				"dweb:/ipfs/QmXE15wzJrGDn8Uut3ioXhTuXSCern1XZRGwCBRRPkhG5x"
+			]
+		}
+	},
+	"version": 1
+}
