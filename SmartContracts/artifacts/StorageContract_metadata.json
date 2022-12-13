@@ -6,11 +6,16 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
 				"inputs": [
 					{
-						"internalType": "bytes32",
+						"internalType": "bytes",
 						"name": "",
-						"type": "bytes32"
+						"type": "bytes"
 					}
 				],
 				"name": "Devices",
@@ -37,17 +42,12 @@
 						"type": "uint256"
 					}
 				],
-				"name": "SensorDataList",
+				"name": "SensorDeviceList",
 				"outputs": [
 					{
 						"internalType": "bytes",
-						"name": "public_key",
+						"name": "",
 						"type": "bytes"
-					},
-					{
-						"internalType": "bool",
-						"name": "created",
-						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -55,11 +55,6 @@
 			},
 			{
 				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "_tx_index",
-						"type": "uint256"
-					},
 					{
 						"internalType": "bytes32",
 						"name": "_cid",
@@ -87,6 +82,19 @@
 					}
 				],
 				"name": "newData",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "_public_key",
+						"type": "bytes"
+					}
+				],
+				"name": "newSensor",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -120,11 +128,11 @@
 	},
 	"sources": {
 		"StorageContract.sol": {
-			"keccak256": "0xd7bb6c1976affebec231be59fd1c45f743f005f62938574dc7bca695232f8788",
+			"keccak256": "0x71ce18e2457568496840f5ee70f5b398784b10dbe0085234ca29bf8230b024be",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://8648b52bba5de7363bb17d7d513a8e35332522f48178d30eaeb303c0bc90eeac",
-				"dweb:/ipfs/QmXE15wzJrGDn8Uut3ioXhTuXSCern1XZRGwCBRRPkhG5x"
+				"bzz-raw://ef0f80d93a2cce4fac9c1479881b47d9f23537b0677f78de5b173324f8f03144",
+				"dweb:/ipfs/Qmbex6JMvP1qLz3vvjenahCcUEF4bA9rejvJWVjDsEMcyT"
 			]
 		}
 	},
