@@ -68,16 +68,6 @@ transaction_dict = {'from': myAddress,
                     'nonce': myNonce,
                     'data': bytecode}  # no constrctor in my smart contract so bytecode is enough
 
-
-transaction_dict = {'from': myAddress,
-                    'to': contractAddress,
-                    'chainId': CHAINID,
-                    'gasPrice': 1,
-                    # careful with gas price, gas price below the threshold defined in the node config will cause all sorts of issues (tx not bieng broadcasted for example)
-                    'gas': 2000000,  # rule of thumb / guess work
-                    'nonce': myNonce,
-                    'data': data}
-
 ### sign the transaction
 signed_transaction_dict = w3.eth.account.signTransaction(transaction_dict, myPrivateKey)
 params = [signed_transaction_dict.rawTransaction.hex()]

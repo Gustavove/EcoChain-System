@@ -23,6 +23,6 @@ def new_node():
 
 @app.route('/new-data', methods=['POST'])
 def new_node():
-    public_key = request.form["public_key"]
+    sensor_data = request.form["data"]
 
 

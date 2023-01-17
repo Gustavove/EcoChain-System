@@ -13,22 +13,17 @@
 			{
 				"inputs": [
 					{
-						"internalType": "bytes",
+						"internalType": "uint256",
 						"name": "",
-						"type": "bytes"
+						"type": "uint256"
 					}
 				],
-				"name": "Devices",
+				"name": "DataProviderList",
 				"outputs": [
 					{
-						"internalType": "bytes",
-						"name": "public_key",
-						"type": "bytes"
-					},
-					{
-						"internalType": "bool",
-						"name": "created",
-						"type": "bool"
+						"internalType": "address",
+						"name": "",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -37,17 +32,22 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "address",
 						"name": "",
-						"type": "uint256"
+						"type": "address"
 					}
 				],
-				"name": "SensorDeviceList",
+				"name": "Devices",
 				"outputs": [
 					{
-						"internalType": "bytes",
-						"name": "",
-						"type": "bytes"
+						"internalType": "address",
+						"name": "provider_address",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "created",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -76,9 +76,9 @@
 						"type": "bytes"
 					},
 					{
-						"internalType": "bytes",
-						"name": "_public_key",
-						"type": "bytes"
+						"internalType": "address",
+						"name": "_provider_address",
+						"type": "address"
 					}
 				],
 				"name": "newData",
@@ -89,12 +89,12 @@
 			{
 				"inputs": [
 					{
-						"internalType": "bytes",
-						"name": "_public_key",
-						"type": "bytes"
+						"internalType": "address",
+						"name": "_provider_address",
+						"type": "address"
 					}
 				],
-				"name": "newSensor",
+				"name": "newProvider",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -128,11 +128,11 @@
 	},
 	"sources": {
 		"StorageContract.sol": {
-			"keccak256": "0x71ce18e2457568496840f5ee70f5b398784b10dbe0085234ca29bf8230b024be",
+			"keccak256": "0xe422ccb6c0cf5835e497585c976ba529de04f1bb3e3af72da1ae2bcf1305adee",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://ef0f80d93a2cce4fac9c1479881b47d9f23537b0677f78de5b173324f8f03144",
-				"dweb:/ipfs/Qmbex6JMvP1qLz3vvjenahCcUEF4bA9rejvJWVjDsEMcyT"
+				"bzz-raw://f05120d735c0cb00bc7c4e3432afa1e14a4d2224114daaf89c26b307776909fe",
+				"dweb:/ipfs/QmdpVv8jEW9zQ24pWLMA9NLBsb6u3XYu9qXUuY1gCdmHz3"
 			]
 		}
 	},

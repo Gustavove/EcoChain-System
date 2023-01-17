@@ -14,30 +14,30 @@ contract StorageContract{
         bool created;
     }
 
-    struct SensorDevice {
-        bytes public_key; //identificador del sensor
+    struct DataProvider {
+        address provider_address; //identificador
         mapping(bytes32 => SensorData) Data;
         bytes32[] SensorDataList;
         bool created;
     }
 
-    mapping(bytes => SensorDevice) public Devices;
-    bytes[] public SensorDeviceList;
+    mapping(address => DataProvider) public Devices;
+    address[] public DataProviderList;
 
     constructor() {
         owner = payable(msg.sender);
     }
 
-    function newSensor (
-        bytes memory _public_key
+    function newProvider (
+        address _provider_address
     )
     public {
         require(payable(msg.sender) == owner, "Only contract's owner can add a sensor");
-        require(Devices[_public_key].created == true, "Sensor has already added");
+        require(Devices[_provider_address].created == true, "Sensor has already added");
 
-        Devices[_public_key].public_key = _public_key;
-        Devices[_public_key].created = true;
-        SensorDeviceList.push(_public_key);
+        Devices[_provider_address].provider_address = _provider_address;
+        Devices[_provider_address].created = true;
+        DataProviderList.push(_provider_address);
     }
 
     function newData (
@@ -45,19 +45,19 @@ contract StorageContract{
         bytes32 _url,
         bytes32 _timestamp,
         bytes memory _signature,
-        bytes memory _public_key
+        address _provider_address
     )
     public {
         require(payable(msg.sender) == owner, "Only contract's owner can add data");
-        require(!Devices[_public_key].created, "A sensor was already registred with the same public key");
+        require(!Devices[_provider_address].created, "A sensor was already registred with the same public key");
 
-        Devices[_public_key].Data[_cid].cid = _cid;
-        Devices[_public_key].Data[_cid].url = _url;
-        Devices[_public_key].Data[_cid].timestamp= _timestamp;
-        Devices[_public_key].Data[_cid].signature = _signature;
-        Devices[_public_key].Data[_cid].created = true;
+        Devices[_provider_address].Data[_cid].cid = _cid;
+        Devices[_provider_address].Data[_cid].url = _url;
+        Devices[_provider_address].Data[_cid].timestamp= _timestamp;
+        Devices[_provider_address].Data[_cid].signature = _signature;
+        Devices[_provider_address].Data[_cid].created = true;
 
-        Devices[_public_key].SensorDataList.push(_cid);
+        Devices[_provider_address].SensorDataList.push(_cid);
     }
 
     /*
