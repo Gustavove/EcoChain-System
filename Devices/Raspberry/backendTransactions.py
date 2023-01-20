@@ -14,7 +14,7 @@ requestId = 0  # is automatically incremented at each request
 
 URL = 'http://127.0.0.1:7545'  # url of my ganche node
 #PATH_GENESIS = '/home/salanfe/privateNetworks/geth_PoA/genesis.json'
-PATH_SC_TRUFFLE = '/home/gustavo/Documentos/Universidad/TFG/Testings/smartcontracts'  # smart contract path
+PATH_SC_TRUFFLE = '/home/gustavo/Documentos/Universidad/TFG/Project/SmartContracts'  # smart contract path
 
 
 CHAINID = 5777
@@ -22,13 +22,13 @@ PERIOD  = 22
 GASLIMIT = 50000000
 
 # compile your smart contract with truffle first
-truffleFile = json.load(open(PATH_SC_TRUFFLE + '/build/contracts/AdditionContract.json'))
+truffleFile = json.load(open(PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json'))
 abi = truffleFile['abi']
 bytecode = truffleFile['bytecode']
 
 # Don't share your private key !
-myAddress = '0x808704d7C39F1402E8Bd5547F6369e00dDE24cD4'  # address funded in genesis file
-myPrivateKey = 'ee8c2cf08d19374beb3aa9cda9fa53afe268dd91b5b15ae5f5645a2026f1267d'
+myAddress = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address funded in genesis file
+myPrivateKey = '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c'
 
 ''' =========================== SOME FUNCTIONS ============================ '''
 
