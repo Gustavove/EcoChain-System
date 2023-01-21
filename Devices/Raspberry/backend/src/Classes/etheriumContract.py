@@ -11,13 +11,14 @@ def createJSONRPCRequestObject(_method, _params, _requestId):
 
 
 class EtheriumContract:
-    def __init__(self, _url, _chainID, _gaslimit):
+    def __init__(self, _url, _chainID, _gasprice, _gaslimit):
         # blockchain info
         self.url = _url
         self.chainID = _chainID
         self.gaslimit = _gaslimit
         self.requestID = 0
-        self.gasPrice = 1
+        self.gasPrice = _gasprice
+        self.contractAddress = 0x0
 
         # create persistent HTTP connection
         self.session = requests.Session()
@@ -55,7 +56,6 @@ class EtheriumContract:
         requestObject, self.requestID = createJSONRPCRequestObject('eth_sendRawTransaction', _params,
                                                                     self.requestID)
         responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
-        print(responseObject)
         transactionHash = responseObject['result']
         print('transaction hash {}'.format(transactionHash))
         return transactionHash
@@ -68,6 +68,7 @@ class EtheriumContract:
             responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
             receipt = responseObject['result']
             if (receipt is not None):
+                print(receipt)
                 break
             time.sleep(22 / 10)
         return receipt
@@ -118,17 +119,16 @@ class EtheriumContract:
             print('newly deployed contract at address {}'.format(contractAddress))
         else:
             raise ValueError('transacation status is "0x0", failed to deploy contract. Check gas, gasPrice first')
-
+        self.contractAddress = self.w3.toChecksumAddress(contractAddress)
         return contractAddress
 
-    def makeTransaction(self, _myAddress, _contractAddress, _myPrivateKey, _function, _values, _gas):  # posiblemente no necesite ser un metodo
-        if _contractAddress == '':
-            raise Exception("Address couldn't be empty")
+    def makeTransaction(self, _myAddress, _myPrivateKey, _function, _values, _gas):  # posiblemente no necesite ser un metodo
+        if self.contractAddress == 0x0:
+            raise Exception("Deploy a contract first")
         else:
-            _contractAddress = self.w3.toChecksumAddress(_contractAddress)
             data = self.formatDataTransaction(_function, _values)
             transaction_dict = {'from': _myAddress,
-                                'to': _contractAddress,
+                                'to': self.contractAddress,
                                 'chainId': self.chainID,
                                 'gasPrice': self.gasPrice,
                                 # careful with gas price, gas price below the threshold defined in the node config will cause all sorts of issues (tx not bieng broadcasted for example)
