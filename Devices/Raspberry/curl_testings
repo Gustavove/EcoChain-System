@@ -1,4 +1,4 @@
 CURL TESTINGS
 
-curl -d "param1=value1&param2=value2" -X POST http://localhost:3000/data
+curl -d 'provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB' -X POST http://127.0.0.1:5000/new-provider
 

@@ -2,14 +2,15 @@ import requests
 import json
 import web3  # Release 4.0.0-beta.8class Transaction:
 import time
+from eth_account.messages import encode_defunct
+from eth_abi import encode_abi
+
 
 def createJSONRPCRequestObject(_method, _params, _requestId):
     return {"jsonrpc": "2.0",
             "method": _method,
             "params": _params,  # must be an array [value1, value2, ..., valueN]
             "id": _requestId}, _requestId + 1
-
-
 class EtheriumContract:
     def __init__(self, _url, _chainID, _gasprice, _gaslimit):
         # blockchain info
@@ -44,13 +45,42 @@ class EtheriumContract:
         params = [signed_transaction_dict.rawTransaction.hex()]
         return params
 
-    def formatDataTransaction(self, _function, _values):
+    def signData(self, data, myPrivateKey):
+        #prepared_message = defunct_hash_message(primitive=data)
+        #signature = self.w3.eth.account.signHash(prepared_message, '0x' + privateKeyUser)
+
+        # This part prepares "version E" messages, using the EIP-191 standard
+        message = encode_defunct(text=data)
+        # This part signs any EIP-191-valid message
+        signed_message = self.w3.eth.account.sign_message(message, myPrivateKey)
+        return signed_message
+
+    def StaticFormatDataTransaction(self, _function, _values):
         data = self.w3.sha3(text=_function)[0:4].hex()  # methodId
         print('methodID of smartcontract function: ' + data)
         for value in _values:
-            param = (value).to_bytes(32, byteorder='big').hex()
+            if type(value) is int:
+                param = (value).to_bytes(32, byteorder='big').hex()
+                print('parametro int: ' + param)
+            elif type(value) is str:
+                param = (value).encode("utf-8").ljust(32, b'\x00').hex()
+                print('parametro string: ' + param)
+            elif type(value) is hex:
+                param = value
+                print('parametro hex: ' + param)
             data += param
         return data
+
+    def encodeABI(self, _function, _values):
+        methodID = self.w3.sha3(text=_function)[0:4].hex()  # methodId
+        parts = _function.split("(")[1]
+        print('antes: ' + parts)
+        input_parameters = parts[:-1]  # remove the last ")"
+        print('antes: ' + input_parameters)
+        input_parameters = input_parameters.split(",")
+        print('input: ' + str(input_parameters) + ' values: ' + str(_values))
+        encoded_data = encode_abi(input_parameters, _values).hex()
+        return methodID + encoded_data
 
     def sendTransaction(self, _params): #try-catch para responseObject - Si hay lagun error no encuentra 'result'
         requestObject, self.requestID = createJSONRPCRequestObject('eth_sendRawTransaction', _params,
@@ -66,6 +96,7 @@ class EtheriumContract:
                                                                        [_transactionHash],
                                                                        self.requestID)
             responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
+            print('response: ' + str(responseObject))
             receipt = responseObject['result']
             if (receipt is not None):
                 print(receipt)
@@ -122,11 +153,10 @@ class EtheriumContract:
         self.contractAddress = self.w3.toChecksumAddress(contractAddress)
         return contractAddress
 
-    def makeTransaction(self, _myAddress, _myPrivateKey, _function, _values, _gas):  # posiblemente no necesite ser un metodo
+    def makeTransaction(self, _myAddress, _myPrivateKey, _data, _gas):  # posiblemente no necesite ser un metodo
         if self.contractAddress == 0x0:
             raise Exception("Deploy a contract first")
         else:
-            data = self.formatDataTransaction(_function, _values)
             transaction_dict = {'from': _myAddress,
                                 'to': self.contractAddress,
                                 'chainId': self.chainID,
@@ -134,7 +164,7 @@ class EtheriumContract:
                                 # careful with gas price, gas price below the threshold defined in the node config will cause all sorts of issues (tx not bieng broadcasted for example)
                                 'gas': _gas,  # rule of thumb / guess work
                                 'nonce': self.getNonce(_myAddress),
-                                'data': data}
+                                'data': _data}
 
             ### sign the transaction
             params = self.signTransaction(transaction_dict, _myPrivateKey)
