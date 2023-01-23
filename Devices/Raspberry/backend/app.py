@@ -1,8 +1,10 @@
 from src.Classes.etheriumContract import EtheriumContract
+from src.Classes.IPFShttp import IPFSconnection
 from flask import Flask, request
 import calendar
 import time
 import binascii
+import json
 
 app = Flask(__name__)
 
@@ -16,6 +18,7 @@ CHAINID = 1337
 GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
 GAS_PRICE = 1 #incentivo para los mineros
 etheriumComunication = EtheriumContract(URL, CHAINID, GAS_PRICE, GASLIMIT)
+clientIPFS = IPFSconnection()
 
 @app.route("/")
 def hello_world():
@@ -25,6 +28,7 @@ def hello_world():
 def init():
     contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
     return 'new contract with address: ' + contract_address
+
 @app.route('/new-provider', methods=['POST'])
 def new_provider():
     provider_address = request.form["provider_address"]
@@ -34,8 +38,7 @@ def new_provider():
 
 @app.route('/new-data', methods=['GET'])
 def new_data():
-    #sensor_data = request.form["data"]
-
+    sensor_data = request.form["data"]
     #Time-stamp
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
@@ -46,6 +49,28 @@ def new_data():
     valor = ['Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu','https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu', time_stamp, value3, MY_ADDRESS]
 
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,bytes,address)', valor, 2000000)
+    return 'ok'
+
+@app.route('/test', methods=['GET'])
+def test():
+    data = {0:{'gps': {'latitude': "41.376966669024604",
+                            'longitude': "2.1546503841953832",
+                            'altitude': "150.44"},
+                    'mac': "00:1B:54:11:3A:B7",
+                    'message': {'pH': '1',
+                                'tds': '100'},
+                    'provider': '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'}
+            }
+
+    json_data = json.dumps(data)
+    cid = clientIPFS.addData(json_data)
+    print(cid)
+    get_data = clientIPFS.getData(cid)
+    print('type: ' + str(type(get_data)) + ' value: ' + get_data)
+
+    dic_data = json.loads(get_data)
+    print('type: ' + str(type(dic_data)) + ' value: ' + str(dic_data['gps']))
+
     return 'ok'
 
 if __name__ == "__main__":  # There is an error on this line
