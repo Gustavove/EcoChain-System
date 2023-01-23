@@ -141,10 +141,11 @@ class EtheriumContract:
         self.contractAddress = self.w3.toChecksumAddress(contractAddress)
         return contractAddress
 
-    def makeTransaction(self, _myAddress, _myPrivateKey, _data, _gas):  # posiblemente no necesite ser un metodo
+    def makeTransaction(self, _myAddress, _myPrivateKey, _function, _valors, _gas):  # posiblemente no necesite ser un metodo
         if self.contractAddress == 0x0:
             raise Exception("Deploy a contract first")
         else:
+            data = self.encodeABI(_function, _valors)
             transaction_dict = {'from': _myAddress,
                                 'to': self.contractAddress,
                                 'chainId': self.chainID,
@@ -152,7 +153,7 @@ class EtheriumContract:
                                 # careful with gas price, gas price below the threshold defined in the node config will cause all sorts of issues (tx not bieng broadcasted for example)
                                 'gas': _gas,  # rule of thumb / guess work
                                 'nonce': self.getNonce(_myAddress),
-                                'data': _data}
+                                'data': data}
 
             ### sign the transaction
             params = self.signTransaction(transaction_dict, _myPrivateKey)
