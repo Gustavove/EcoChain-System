@@ -2,11 +2,12 @@ from src.Classes.etheriumContract import EtheriumContract
 from flask import Flask, request
 import calendar
 import time
+import binascii
 
 app = Flask(__name__)
 
 #tenporal variables until wallet class will be created
-MY_ADDRESS = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address funded in genesis file
+MY_ADDRESS = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address
 MY_PRIVATE_KEY = '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c'
 
 URL = 'http://127.0.0.1:7545'  # url of my ganche node
@@ -28,9 +29,7 @@ def init():
 @app.route('/new-provider', methods=['POST'])
 def new_provider():
     provider_address = request.form["provider_address"]
-    #valor = int(provider_address, base=16)
-    #param = ['0x' + (valor).to_bytes(32, byteorder='big').hex()]
-    param = [MY_ADDRESS]
+    param = [provider_address]
     data = etheriumComunication.encodeABI('newProvider(address)', param)
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, data, 2000000)
     return 'ok'
@@ -42,10 +41,15 @@ def new_data():
     #Time-stamp
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    data = 'Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + str(time_stamp)
+
+    data = ('Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + str(time_stamp))
     data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
-    valor = ('Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu','https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',str(time_stamp), str(data_signed.signature), int(MY_ADDRESS, base=16))
-    etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(bytes32,bytes32,bytes32,bytes,address)', valor, 2000000)
+    value3 = data_signed.signature.ljust(32, b'\x00')
+
+    valors = ['Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu','https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu', time_stamp, value3, MY_ADDRESS]
+    param = etheriumComunication.encodeABI('newData(string,string,uint256,bytes,address)', valors)
+
+    etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, param, 2000000)
     return 'ok'
 @app.route('/test', methods=['GET'])
 def test():
@@ -80,13 +84,15 @@ def test2():
     value2 = 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu'
     data = value + value2 + str(time_stamp)
     data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
-    value3 = data_signed.signature.hex()
-    print(str(type(value3)) + 'value: ' + str(value3))
-    b = bytes(value3, 'utf-8')
-    hex_data = b.hex()
-    print(str(type(hex_data)) + 'value: ' + str(hex_data))
-    param = (value, value2, value3)
-    etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'test(bytes32,bytes32,bytes)', param, 2000000)
+    print('value ' + str(data_signed))
+    #value3 = data_signed.signature.ljust(32, b'\x00')
+    value3 = data_signed.signature.ljust(32, b'\x00')
+    print('coded_value ' + str(value3))
+    decoded_value = binascii.hexlify(value3)
+    print('decoded_value ' + str(decoded_value))
+    valors = [value, value2, value3]
+    param = etheriumComunication.encodeABI('test(string,string,bytes)', valors)
+    etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, param, 2000000)
     return 'ok'
 
 if __name__ == "__main__":  # There is an error on this line

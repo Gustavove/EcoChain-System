@@ -55,30 +55,18 @@ class EtheriumContract:
         signed_message = self.w3.eth.account.sign_message(message, myPrivateKey)
         return signed_message
 
-    def StaticFormatDataTransaction(self, _function, _values):
-        data = self.w3.sha3(text=_function)[0:4].hex()  # methodId
-        print('methodID of smartcontract function: ' + data)
-        for value in _values:
-            if type(value) is int:
-                param = (value).to_bytes(32, byteorder='big').hex()
-                print('parametro int: ' + param)
-            elif type(value) is str:
-                param = (value).encode("utf-8").ljust(32, b'\x00').hex()
-                print('parametro string: ' + param)
-            elif type(value) is hex:
-                param = value
-                print('parametro hex: ' + param)
-            data += param
-        return data
-
     def encodeABI(self, _function, _values):
         methodID = self.w3.sha3(text=_function)[0:4].hex()  # methodId
+        #obtenemos el formato de los valores
         parts = _function.split("(")[1]
-        print('antes: ' + parts)
         input_parameters = parts[:-1]  # remove the last ")"
-        print('antes: ' + input_parameters)
         input_parameters = input_parameters.split(",")
-        print('input: ' + str(input_parameters) + ' values: ' + str(_values))
+        #identificamos las direcciones mal hechas
+        cont = 0
+        for input in input_parameters:
+            if input == 'address':
+                _values[cont] = self.w3.toChecksumAddress(_values[cont])
+            cont+=1
         encoded_data = encode_abi(input_parameters, _values).hex()
         return methodID + encoded_data
 
@@ -178,6 +166,6 @@ class EtheriumContract:
             if (receipt['status'] == '0x1'):
                 print('transaction successfully mined')
             else:
-                raise ValueError('transacation status is "0x0", failed to deploy contract. Check gas, gasPrice first')
+                raise ValueError('transacation status is "0x0", failed to deploy contract. Check gas, gasPrice, parameters first')
 
 
