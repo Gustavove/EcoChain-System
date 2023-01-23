@@ -4,13 +4,10 @@ import web3  # Release 4.0.0-beta.8class Transaction:
 import time
 from eth_account.messages import encode_defunct
 from eth_abi import encode_abi
+import pprint
 
+pp = pprint.PrettyPrinter(indent=2)
 
-def createJSONRPCRequestObject(_method, _params, _requestId):
-    return {"jsonrpc": "2.0",
-            "method": _method,
-            "params": _params,  # must be an array [value1, value2, ..., valueN]
-            "id": _requestId}, _requestId + 1
 class EtheriumContract:
     def __init__(self, _url, _chainID, _gasprice, _gaslimit):
         # blockchain info
@@ -25,6 +22,12 @@ class EtheriumContract:
         self.session = requests.Session()
         self.w3 = web3.Web3()
 
+    def createJSONRPCRequestObject(self, _method, _params, _requestId):
+        return {"jsonrpc": "2.0",
+                "method": _method,
+                "params": _params,  # must be an array [value1, value2, ..., valueN]
+                "id": _requestId}, _requestId + 1
+
     def postJSONRPCRequestObject(self, _HTTPEnpoint, _jsonRPCRequestObject):
         response = self.session.post(_HTTPEnpoint,
                                      json=_jsonRPCRequestObject,
@@ -32,9 +35,7 @@ class EtheriumContract:
         return response.json()
 
     def getNonce(self, _myAdress):
-        requestObject, self.requestID = createJSONRPCRequestObject('eth_getTransactionCount',
-                                                                   [_myAdress, 'latest'],
-                                                                   self.requestID)
+        requestObject, self.requestID = self.createJSONRPCRequestObject('eth_getTransactionCount', [_myAdress, 'latest'], self.requestID)
         responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
         myNonce = self.w3.toInt(hexstr=responseObject['result'])
         print('nonce of address {} is {}'.format(_myAdress, myNonce))
@@ -46,8 +47,8 @@ class EtheriumContract:
         return params
 
     def signData(self, data, myPrivateKey):
-        #prepared_message = defunct_hash_message(primitive=data)
-        #signature = self.w3.eth.account.signHash(prepared_message, '0x' + privateKeyUser)
+        # prepared_message = defunct_hash_message(primitive=data)
+        # signature = self.w3.eth.account.signHash(prepared_message, '0x' + privateKeyUser)
 
         # This part prepares "version E" messages, using the EIP-191 standard
         message = encode_defunct(text=data)
@@ -57,34 +58,34 @@ class EtheriumContract:
 
     def encodeABI(self, _function, _values):
         methodID = self.w3.sha3(text=_function)[0:4].hex()  # methodId
-        #obtenemos el formato de los valores
+        # obtenemos el formato de los valores
         parts = _function.split("(")[1]
         input_parameters = parts[:-1]  # remove the last ")"
         input_parameters = input_parameters.split(",")
-        #identificamos las direcciones mal hechas
+        # identificamos las direcciones mal hechas
         cont = 0
         for input in input_parameters:
             if input == 'address':
                 _values[cont] = self.w3.toChecksumAddress(_values[cont])
-            cont+=1
+            cont += 1
         encoded_data = encode_abi(input_parameters, _values).hex()
         return methodID + encoded_data
 
-    def sendTransaction(self, _params): #try-catch para responseObject - Si hay lagun error no encuentra 'result'
-        requestObject, self.requestID = createJSONRPCRequestObject('eth_sendRawTransaction', _params,
-                                                                    self.requestID)
+    def sendTransaction(self, _params):  # try-catch para responseObject - Si hay lagun error no encuentra 'result'
+        requestObject, self.requestID = self.createJSONRPCRequestObject('eth_sendRawTransaction', _params, self.requestID)
         responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
+
+        if 'error' in responseObject:
+            raise Exception(responseObject['error']['message'])
+
         transactionHash = responseObject['result']
         print('transaction hash {}'.format(transactionHash))
         return transactionHash
 
     def transactionMined(self, _transactionHash):
         while (True):
-            requestObject, self.requestID = createJSONRPCRequestObject('eth_getTransactionReceipt',
-                                                                       [_transactionHash],
-                                                                       self.requestID)
+            requestObject, self.requestID = self.createJSONRPCRequestObject('eth_getTransactionReceipt', [_transactionHash], self.requestID)
             responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
-            print('response: ' + str(responseObject))
             receipt = responseObject['result']
             if (receipt is not None):
                 print(receipt)
@@ -100,9 +101,8 @@ class EtheriumContract:
                             'data': data}
 
         params = [transaction_dict, 'latest']
-        requestObject, self.requestID = createJSONRPCRequestObject('eth_call', params, self.requestID)
+        requestObject, self.requestID = self.createJSONRPCRequestObject('eth_call', params, self.requestID)
         responseObject = self.postJSONRPCRequestObject(self.url, requestObject)
-        print("responseObject: ", responseObject)
         result = self.w3.toInt(hexstr=responseObject[
             'result'])  # por ahora retorna como solo como Int, mirar más adelante para que retorne más general
 
@@ -141,7 +141,8 @@ class EtheriumContract:
         self.contractAddress = self.w3.toChecksumAddress(contractAddress)
         return contractAddress
 
-    def makeTransaction(self, _myAddress, _myPrivateKey, _function, _valors, _gas):  # posiblemente no necesite ser un metodo
+    def makeTransaction(self, _myAddress, _myPrivateKey, _function, _valors,
+                        _gas):  # posiblemente no necesite ser un metodo
         if self.contractAddress == 0x0:
             raise Exception("Deploy a contract first")
         else:
@@ -167,6 +168,5 @@ class EtheriumContract:
             if (receipt['status'] == '0x1'):
                 print('transaction successfully mined')
             else:
-                raise ValueError('transacation status is "0x0", failed to deploy contract. Check gas, gasPrice, parameters first')
-
-
+                raise ValueError(
+                    'transaction status is "0x0", failed to deploy contract. Check gas, gasPrice, parameters first')

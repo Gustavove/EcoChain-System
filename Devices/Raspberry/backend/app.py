@@ -12,10 +12,9 @@ MY_PRIVATE_KEY = '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a9
 
 URL = 'http://127.0.0.1:7545'  # url of my ganche node
 PATH_SC_TRUFFLE = '/home/gustavo/Documentos/Universidad/TFG/Project/SmartContracts'  # smart contract path
-CHAINID = 5777
-PERIOD = 22
-GASLIMIT = 50000000
-GAS_PRICE = 1
+CHAINID = 1337
+GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
+GAS_PRICE = 1 #incentivo para los mineros
 etheriumComunication = EtheriumContract(URL, CHAINID, GAS_PRICE, GASLIMIT)
 
 @app.route("/")
