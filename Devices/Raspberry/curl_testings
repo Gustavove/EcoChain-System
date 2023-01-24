@@ -2,3 +2,18 @@ CURL TESTINGS
 
 curl -d 'provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB' -X POST http://127.0.0.1:5000/new-provider
 
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B7", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d825CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B7", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/new-data
+
+

@@ -17,8 +17,9 @@ PATH_SC_TRUFFLE = '/home/gustavo/Documentos/Universidad/TFG/Project/SmartContrac
 CHAINID = 1337
 GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
 GAS_PRICE = 1 #incentivo para los mineros
+MAX_DATA_TO_SEND = 4
 etheriumComunication = EtheriumContract(URL, CHAINID, GAS_PRICE, GASLIMIT)
-clientIPFS = IPFSconnection()
+clientIPFS = IPFSconnection(MAX_DATA_TO_SEND)
 
 @app.route("/")
 def hello_world():
@@ -36,40 +37,50 @@ def new_provider():
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newProvider(address)', param, 2000000)
     return 'ok'
 
-@app.route('/new-data', methods=['GET'])
+@app.route('/new-data', methods=['POST'])
 def new_data():
+    result = ""
+
     sensor_data = request.form["data"]
-    #Time-stamp
-    current_GMT = time.gmtime()
-    time_stamp = calendar.timegm(current_GMT)
+    data = json.loads(sensor_data)
+    cid = clientIPFS.addData(data)
+    if cid == "":
+        result = "Data uploaded to provider"
 
-    data = ('Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu' + str(time_stamp))
-    data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
-    value3 = data_signed.signature.ljust(32, b'\x00') #para decodificar: decoded_value = binascii.hexlify(value3)
-    valor = ['Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu','https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu', time_stamp, value3, MY_ADDRESS]
+    else:
+        #Time-stamp
+        current_GMT = time.gmtime()
+        time_stamp = calendar.timegm(current_GMT)
 
-    etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,bytes,address)', valor, 2000000)
-    return 'ok'
+        data = (cid + 'https://ipfs.io/ipfs/' + cid + str(time_stamp))
+        data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
+        value4 = data_signed.signature.ljust(32, b'\x00') #para decodificar: decoded_value = binascii.hexlify(value3)
+        valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, value4, MY_ADDRESS]
+
+        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,bytes,address)', valor, 2000000)
+
+        result = "Data uploaded to IPFS and blockchain with cid: " + cid
+    return result
 
 @app.route('/test', methods=['GET'])
 def test():
-    data = {0:{'gps': {'latitude': "41.376966669024604",
-                            'longitude': "2.1546503841953832",
-                            'altitude': "150.44"},
-                    'mac': "00:1B:54:11:3A:B7",
-                    'message': {'pH': '1',
-                                'tds': '100'},
-                    'provider': '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'}
-            }
+    """ data = {"gps": {"latitude": "41.376966669024604",
+                            "longitude": "2.1546503841953832",
+                            "altitude": "150.44"},
+                    "mac": "00:1B:54:11:3A:B7",
+                    "message": {"pH": "1",
+                                "tds": "100"},
+                    "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"} """
 
-    json_data = json.dumps(data)
-    cid = clientIPFS.addData(json_data)
-    print(cid)
-    get_data = clientIPFS.getData(cid)
-    print('type: ' + str(type(get_data)) + ' value: ' + get_data)
+    get_data = clientIPFS.getData('QmQrzxuvMBrgD9xhHnmHWRRNWMT6kHHm6PoadXE26NbpNL')
+    print('type: ' + str(type(get_data)) + ' value: ' + str(get_data))
 
-    dic_data = json.loads(get_data)
-    print('type: ' + str(type(dic_data)) + ' value: ' + str(dic_data['gps']))
+    for key in get_data:
+        print('key: ' + key + ' type: ' + str(type(key)))
+        print('gps: ' + str(get_data[key]['gps']))
+
+    print('quiero coger del segundo el gps: ' + str(get_data['0']['gps'])) #En JSON las claves siempre son strings
+    #print('type: ' + str(type(dic_data)) + ' value: ' + str(dic_data[0]))
 
     return 'ok'
 
