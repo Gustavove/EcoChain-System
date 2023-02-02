@@ -1,7 +1,6 @@
 import ipfshttpclient
 import json
 
-# Share TCP connections until the client session is closed
 class IPFSconnection:
 	def __init__(self, max_cont):
 		self._client = ipfshttpclient.connect(session=True)

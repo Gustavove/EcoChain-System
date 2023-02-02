@@ -5,6 +5,7 @@ import calendar
 import time
 import binascii
 import json
+from src.Modules import config
 
 app = Flask(__name__)
 
@@ -12,14 +13,14 @@ app = Flask(__name__)
 MY_ADDRESS = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address
 MY_PRIVATE_KEY = '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c'
 
-URL = 'http://127.0.0.1:7545'  # url of my ganche node
 PATH_SC_TRUFFLE = '/home/gustavo/Documentos/Universidad/TFG/Project/SmartContracts'  # smart contract path
-CHAINID = 1337
-GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
-GAS_PRICE = 1 #incentivo para los mineros
-MAX_DATA_TO_SEND = 4
-etheriumComunication = EtheriumContract(URL, CHAINID, GAS_PRICE, GASLIMIT)
-clientIPFS = IPFSconnection(MAX_DATA_TO_SEND)
+config_info = config.init()
+etheriumComunication = EtheriumContract(config_info['url'],
+                                        config_info['chainid'],
+                                        config_info['gasprice'],
+                                        config_info['gaslimit'],
+                                        config_info['contract_address'])
+clientIPFS = IPFSconnection(config_info['max_data_to_send'])
 
 @app.route("/")
 def hello_world():
@@ -27,8 +28,12 @@ def hello_world():
 
 @app.route('/init', methods=['GET']) #almacenar los datos del contrato en un archivo aparte y comprobar antes si ya existe uno
 def init():
-    contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
-    return 'new contract with address: ' + contract_address
+    contract_address = config_info['contract_address']
+    if contract_address == 0x0:
+        contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
+        config.new_contract(contract_address)
+        config_info['contract_address'] = contract_address
+    return 'Contract deployed with address: ' + str(contract_address)
 
 @app.route('/new-provider', methods=['POST'])
 def new_provider():
@@ -52,7 +57,7 @@ def new_data():
         current_GMT = time.gmtime()
         time_stamp = calendar.timegm(current_GMT)
 
-        data = (cid + 'https://ipfs.io/ipfs/' + cid + str(time_stamp))
+        data = (cid + 'https://ipfs.io/ipfs/' + str(time_stamp))
         data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
         value4 = data_signed.signature.ljust(32, b'\x00') #para decodificar: decoded_value = binascii.hexlify(value3)
         valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, value4, MY_ADDRESS]
@@ -64,6 +69,7 @@ def new_data():
 
 @app.route('/test', methods=['GET'])
 def test():
+
     """ data = {"gps": {"latitude": "41.376966669024604",
                             "longitude": "2.1546503841953832",
                             "altitude": "150.44"},
@@ -72,7 +78,7 @@ def test():
                                 "tds": "100"},
                     "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"} """
 
-    get_data = clientIPFS.getData('QmQrzxuvMBrgD9xhHnmHWRRNWMT6kHHm6PoadXE26NbpNL')
+    get_data = clientIPFS.getData('QmYevdNueNL243CNzd3PExfeVBZmgesFGXmxbbhTbxte7B')
     print('type: ' + str(type(get_data)) + ' value: ' + str(get_data))
 
     for key in get_data:
@@ -86,4 +92,3 @@ def test():
 
 if __name__ == "__main__":  # There is an error on this line
     app.run(debug=True, host='0.0.0.0')
-    print("test")

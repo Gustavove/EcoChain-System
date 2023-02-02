@@ -9,14 +9,14 @@ import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
 class EtheriumContract:
-    def __init__(self, _url, _chainID, _gasprice, _gaslimit):
+    def __init__(self, _url, _chainID, _gasprice, _gaslimit, _contract_address):
         # blockchain info
         self.url = _url
         self.chainID = _chainID
         self.gaslimit = _gaslimit
         self.requestID = 0
         self.gasPrice = _gasprice
-        self.contractAddress = 0x0
+        self.contractAddress = _contract_address
 
         # create persistent HTTP connection
         self.session = requests.Session()

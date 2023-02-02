@@ -1,0 +1,8 @@
+{
+  "contract_address": "0x88ccbab48bc26652ae5477275ca0fea12e1bc64f",
+  "url": "http://127.0.0.1:7545",
+  "chainid": 1337,
+  "gaslimit": 50000000,
+  "gasprice": 1,
+  "max_data_to_send": 4
+}
