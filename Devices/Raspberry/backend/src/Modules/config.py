@@ -11,7 +11,7 @@ GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
 GAS_PRICE = 1 #incentivo para los mineros
 MAX_DATA_TO_SEND = 4
 
-#Guarda en un archivo de configuración los datos esenciales del projecto
+#Guarda en un archivo de configuración los datos esenciales del projecto,, si ya existe los carga
 def init():
     try:
         with open(PATH_FILE, 'r') as file:
@@ -28,6 +28,7 @@ def init():
             json.dump(data, file, indent=2)
             return data
 
+#Modfifca el archivo de configuración para guardar los datos
 def new_contract(contract_address):
     data = {}
     with open(PATH_FILE, 'r') as file:

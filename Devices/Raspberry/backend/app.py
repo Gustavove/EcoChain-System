@@ -29,8 +29,10 @@ def hello_world():
 @app.route('/init', methods=['GET']) #almacenar los datos del contrato en un archivo aparte y comprobar antes si ya existe uno
 def init():
     contract_address = config_info['contract_address']
+    print('Contract_address before: ' + str(contract_address))
     if contract_address == 0x0:
         contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
+        print('Contract_address after: ' + str(contract_address))
         config.new_contract(contract_address)
         config_info['contract_address'] = contract_address
     return 'Contract deployed with address: ' + str(contract_address)
@@ -57,13 +59,11 @@ def new_data():
         current_GMT = time.gmtime()
         time_stamp = calendar.timegm(current_GMT)
 
-        data = (cid + 'https://ipfs.io/ipfs/' + str(time_stamp))
+        data = (cid + 'https://ipfs.io/ipfs/' + cid + str(time_stamp))
         data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
-        value4 = data_signed.signature.ljust(32, b'\x00') #para decodificar: decoded_value = binascii.hexlify(value3)
-        valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, value4, MY_ADDRESS]
-
-        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,bytes,address)', valor, 2000000)
-
+        print(str(data_signed))
+        valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, data_signed.v, data_signed.r.to_bytes(32, byteorder='big'), data_signed.s.to_bytes(32, byteorder='big'), data_signed.messageHash]
+        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,uint8,bytes32,bytes32,bytes32)', valor, 2000000)
         result = "Data uploaded to IPFS and blockchain with cid: " + cid
     return result
 
@@ -78,17 +78,25 @@ def test():
                                 "tds": "100"},
                     "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"} """
 
-    get_data = clientIPFS.getData('QmYevdNueNL243CNzd3PExfeVBZmgesFGXmxbbhTbxte7B')
-    print('type: ' + str(type(get_data)) + ' value: ' + str(get_data))
+    cid = 'QmYevdNueNL243CNzd3PExfeVBZmgesFGXmxbbhTbxte7B'
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
 
-    for key in get_data:
-        print('key: ' + key + ' type: ' + str(type(key)))
-        print('gps: ' + str(get_data[key]['gps']))
+    data = str(
+                {'cid': cid,
+                 'url':'https://ipfs.io/ipfs/' + cid,
+                 'time_stamp': str(time_stamp)}
+               )
 
-    print('quiero coger del segundo el gps: ' + str(get_data['0']['gps'])) #En JSON las claves siempre son strings
-    #print('type: ' + str(type(dic_data)) + ' value: ' + str(dic_data[0]))
+    data_signed = etheriumComunication.signData(data, '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c')
+    print(str(data_signed))
+    valor = [data_signed.v, data_signed.r.to_bytes(32, byteorder='big'), data_signed.s.to_bytes(32, byteorder='big'), data_signed.messageHash]
+
+    etheriumComunication.makeTransaction('0xD62b91863401862a9e2a4fF7f71c332b8d55Ff31', '32957d5252f821bdb86fb61f28234e29623e33f4c4b1103fd22c81bd3c9384bc', 'test(uint8,bytes32,bytes32,bytes32)', valor, 2000000)
 
     return 'ok'
 
-if __name__ == "__main__":  # There is an error on this line
+if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
+
+# para almacenar bytes smartcontract: ej value4 = data_signed.signature.ljust(32, b'\x00'), para decodificar: decoded_value = binascii.hexlify(value3)

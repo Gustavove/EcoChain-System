@@ -139,7 +139,8 @@ class EtheriumContract:
         else:
             raise ValueError('transacation status is "0x0", failed to deploy contract. Check gas, gasPrice first')
         self.contractAddress = self.w3.toChecksumAddress(contractAddress)
-        return contractAddress
+
+        return self.contractAddress
 
     def makeTransaction(self, _myAddress, _myPrivateKey, _function, _valors,
                         _gas):  # posiblemente no necesite ser un metodo
