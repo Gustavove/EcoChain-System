@@ -64,12 +64,34 @@ def new_data():
     return result
 
 
-@app.route('/provider/getcids', methods=['POST'])
+@app.route('/provider/getcids', methods=['GET'])
 def provider_cids():
-    provider_address = request.form["provider_address"]
+    query_parameters = request.args
+    provider_address = query_parameters.get("provider_address")
     function = "getDataProviderCids(address)"
     values = [provider_address]
     returned_types = ["string[]"]
+    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    print(str(cod))
+    return 'ok'
+
+@app.route('/provider/getall', methods=['GET'])
+def provider_getall():
+    function = "getAllDataProviders()"
+    returned_types = ["address[]"]
+    values = []
+    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    print(str(cod))
+    return 'ok'
+
+@app.route('/sensor/getdata', methods=['GET'])
+def sensor_getdata():
+    query_parameters = request.args
+    cid = query_parameters.get("cid")
+    provider_address = query_parameters.get("provider_address")
+    function = "getSensorData(string,address)"
+    returned_types = ['string','string','uint256','uint8','bytes32','bytes32','bytes32']
+    values = [cid, provider_address]
     cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
     print(str(cod))
     return 'ok'
