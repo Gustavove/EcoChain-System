@@ -29,25 +29,21 @@ def hello_world():
 @app.route('/init', methods=['GET']) #almacenar los datos del contrato en un archivo aparte y comprobar antes si ya existe uno
 def init():
     contract_address = config_info['contract_address']
-    print('Contract_address before: ' + str(contract_address))
     if contract_address == 0x0:
         contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
-        print('Contract_address after: ' + str(contract_address))
         config.new_contract(contract_address)
         config_info['contract_address'] = contract_address
     return 'Contract deployed with address: ' + str(contract_address)
 
-@app.route('/new-provider', methods=['POST'])
+@app.route('/provider/new', methods=['POST'])
 def new_provider():
     provider_address = request.form["provider_address"]
     param = [provider_address]
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newProvider(address)', param, 2000000)
     return 'ok'
 
-@app.route('/new-data', methods=['POST'])
+@app.route('/sensor/adddata', methods=['POST'])
 def new_data():
-    result = ""
-
     sensor_data = request.form["data"]
     data = json.loads(sensor_data)
     cid = clientIPFS.addData(data)
@@ -66,6 +62,17 @@ def new_data():
         etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,uint8,bytes32,bytes32,bytes32)', valor, 2000000)
         result = "Data uploaded to IPFS and blockchain with cid: " + cid
     return result
+
+
+@app.route('/provider/getcids', methods=['POST'])
+def provider_cids():
+    provider_address = request.form["provider_address"]
+    function = "getDataProviderCids(address)"
+    values = [provider_address]
+    returned_types = ["string[]"]
+    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    print(str(cod))
+    return 'ok'
 
 @app.route('/test', methods=['GET'])
 def test():
