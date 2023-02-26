@@ -9,7 +9,7 @@ from src.Modules import config
 
 app = Flask(__name__)
 
-#tenporal variables until wallet class will be created
+#tenporal variables until wallet (metamask) will be created
 MY_ADDRESS = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address
 MY_PRIVATE_KEY = '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c'
 
