@@ -1,13 +1,16 @@
 from src.Classes.etheriumContract import EtheriumContract
 from src.Classes.IPFShttp import IPFSconnection
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import calendar
 import time
 import binascii
 import json
 from src.Modules import config
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+#CORS(app, origins=['http://10.0.2.15:3001']) solo permitir una dirección
 
 #tenporal variables until wallet (metamask) will be created
 MY_ADDRESS = '0x21e517bf6De93b1D783fEB84ddE42F589d845CEB'  # address
@@ -29,15 +32,20 @@ def hello_world():
 @app.route('/init', methods=['GET']) #almacenar los datos del contrato en un archivo aparte y comprobar antes si ya existe uno
 def init():
     contract_address = config_info['contract_address']
+    type_contract = 'already_deployed'
     if contract_address == 0x0:
         contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
         config.new_contract(contract_address)
         config_info['contract_address'] = contract_address
-    return 'Contract deployed with address: ' + str(contract_address)
+        type_contract = 'new'
+
+    response = {'contract_address': str(contract_address), 'type': type_contract}
+    return jsonify(response)
 
 @app.route('/provider/new', methods=['POST'])
 def new_provider():
-    provider_address = request.form["provider_address"]
+    info = request.get_json()
+    provider_address = info["provider_address"]
     param = [provider_address]
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newProvider(address)', param, 2000000)
     return 'ok'
