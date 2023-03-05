@@ -82,8 +82,8 @@ def new_data():
     return result
 
 
-@app.route('/provider/getcids', methods=['GET'])
-def provider_cids():
+@app.route('/provider/blockchain/getcids', methods=['GET'])
+def provider_blockchain_cids():
     query_parameters = request.args
     provider_address = query_parameters.get("provider_address")
     function = "getDataProviderCids(address)"
@@ -93,8 +93,8 @@ def provider_cids():
     print(str(cod))
     return 'ok'
 
-@app.route('/provider/getall', methods=['GET'])
-def provider_getall():
+@app.route('/provider/blockchain/getall', methods=['GET'])
+def provider_blockchain_getall():
     function = "getAllDataProviders()"
     returned_types = ["address[]"]
     values = []
@@ -102,8 +102,8 @@ def provider_getall():
     print(str(cod))
     return 'ok'
 
-@app.route('/sensor/getdata', methods=['GET'])
-def sensor_getdata():
+@app.route('/sensor/blockchain/getdata', methods=['GET'])
+def sensor_blockchain_getdata():
     query_parameters = request.args
     cid = query_parameters.get("cid")
     provider_address = query_parameters.get("provider_address")
@@ -135,6 +135,18 @@ def remove_sensor():
         return result, status_code
     else:
         return 'Sensor id cannot be null', 400
+
+@app.route('/sensor/all/registered', methods=['GET'])
+def get_all_registered_sensor():
+    data = config.get_registered_sensors()
+    return jsonify(data)
+
+@app.route('/sensor/getcids', methods=['GET'])
+def get_all_cids_sensor():
+    query_parameters = request.args
+    sensor_id = query_parameters.get("id")
+    data = config.get_cids_sensor(sensor_id)
+    return jsonify(data)
 
 @app.route('/test', methods=['GET'])
 def test():

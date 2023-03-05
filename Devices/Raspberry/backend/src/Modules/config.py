@@ -31,7 +31,6 @@ def init():
 
 #Modfifca el archivo de configuración para guardar los datos
 def new_contract(contract_address):
-    data = {}
     with open(PATH_FILE, 'r') as file:
         data = json.load(file)
 
@@ -79,3 +78,19 @@ def save_cid(sensor_id, cid):
     data['cids'] = cids
     with open(PATH_FILE, 'w') as file:
         json.dump(data, file, indent=2)
+
+#Obten los sensores registrados, sino hay ninguno registrado devuelve un array vacio
+def get_registered_sensors():
+    with open(PATH_FILE) as f:
+        config = json.load(f)
+        sensors = config.get('sensors', [])
+    return sensors if isinstance(sensors, list) else []
+
+#Obten los cid de un sensor
+def get_cids_sensor(sensor_id):
+    with open(PATH_FILE) as f:
+        config = json.load(f)
+        cids = config.get('cids', {})
+        if sensor_id not in cids:
+            return 'Sensor not found'
+        return cids[sensor_id]
