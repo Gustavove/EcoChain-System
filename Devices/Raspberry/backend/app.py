@@ -44,8 +44,9 @@ def init():
 
 @app.route('/provider/new', methods=['POST'])
 def new_provider():
-    info = request.get_json()
-    provider_address = info["provider_address"]
+    provider_address = request.form["provider_address"]
+    #info = request.get_json()
+    #provider_address = info["provider_address"]
     param = [provider_address]
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newProvider(address)', param, 2000000)
     return 'ok'
@@ -54,7 +55,10 @@ def new_provider():
 def new_data():
     sensor_data = request.form["data"]
     data = json.loads(sensor_data)
-    cid = clientIPFS.addData(data)
+    sensor_id = data.get("mac")
+    print(sensor_id)
+    cid = clientIPFS.addData(data, sensor_id)
+
     if cid == "":
         result = "Data uploaded to provider"
 
@@ -68,6 +72,12 @@ def new_data():
         print(str(data_signed))
         valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, data_signed.v, data_signed.r.to_bytes(32, byteorder='big'), data_signed.s.to_bytes(32, byteorder='big'), data_signed.messageHash]
         etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,uint8,bytes32,bytes32,bytes32)', valor, 2000000)
+
+        try:
+            config.save_cid(sensor_id, cid)
+        except ValueError as e:
+            return str(e), 404
+
         result = "Data uploaded to IPFS and blockchain with cid: " + cid
     return result
 
@@ -103,6 +113,28 @@ def sensor_getdata():
     cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
     print(str(cod))
     return 'ok'
+
+@app.route('/sensor/new', methods=['POST'])
+def new_sensor():
+    sensor_id = request.form["id"]
+    #data = request.get_json()
+    #sensor_id = data.get('id')
+    if sensor_id is not None:
+        result, status_code = config.add_sensor(sensor_id)
+        return result, status_code
+    else:
+        return 'Sensor id cannot be null', 400
+
+@app.route('/sensor/remove', methods=['POST'])
+def remove_sensor():
+    sensor_id = request.form["id"]
+    #data = request.get_json()
+    #sensor_id = data.get('id')
+    if sensor_id is not None:
+        result, status_code = config.delete_sensor(sensor_id)
+        return result, status_code
+    else:
+        return 'Sensor id cannot be null', 400
 
 @app.route('/test', methods=['GET'])
 def test():

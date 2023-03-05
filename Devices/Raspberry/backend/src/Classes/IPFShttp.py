@@ -1,24 +1,28 @@
 import ipfshttpclient
+from Modules import temp_sensors_data
 import json
+
+temp_sensors_data.init()
 
 class IPFSconnection:
 	def __init__(self, max_cont):
 		self._client = ipfshttpclient.connect(session=True)
-		self.contData = 0
-		self.maxContData = max_cont
-		self.dic_to_send = {}
+		self.maxContData = max_cont-1
 
-	def addData(self, _data):
+	def addData(self, _data, sensor_id):
 		cid = ""
-		if(self.contData < self.maxContData):
-			self.dic_to_send[self.contData] = _data
-			self.contData += 1
-			print('dato subido: ' + str(self.contData))
-			if self.contData == self.maxContData:
-				cid = self._client.add_json(self.dic_to_send)
-				print('data uploaded: ' + str(self.dic_to_send))
-				self.dic_to_send.clear()
-				self.contData = 0
+		contData = int(temp_sensors_data.get_last_data_id(sensor_id))
+		print(contData)
+		print(str(type(contData)))
+		if(contData <= self.maxContData):
+			temp_sensors_data.save_sensor_data(sensor_id, _data)
+			print('dato subido: ' + str(contData))
+			if contData == self.maxContData:
+				print("llega")
+				#AQUI DEBERIA DE IR CODIGO QUE COMPRUEBE QUE LOS DATOS Y LA FIRMA COINCIDEN
+				cid = self._client.add_json(temp_sensors_data.get_sensor_data(sensor_id))
+				print('data uploaded: ' + str(temp_sensors_data.get_sensor_data(sensor_id)))
+				temp_sensors_data.delete_sensor_data(sensor_id)
 		return cid
 	def getData(self, cid):
 		get_data = self._client.get_json(cid)

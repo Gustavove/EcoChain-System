@@ -24,7 +24,8 @@ def init():
                     'chainid': CHAINID,
                     'gaslimit': GASLIMIT,
                     'gasprice': GAS_PRICE,
-                    'max_data_to_send': MAX_DATA_TO_SEND}
+                    'max_data_to_send': MAX_DATA_TO_SEND,
+                    'sensors': []}
             json.dump(data, file, indent=2)
             return data
 
@@ -38,3 +39,43 @@ def new_contract(contract_address):
         data['contract_address'] = contract_address
         json.dump(data, file, indent=2)
 
+def add_sensor(sensor_id):
+    with open(PATH_FILE, 'r') as file:
+        data = json.load(file)
+    sensors = data.get('sensors', [])
+    if sensor_id in sensors:
+        return 'Sensor already exists', 400
+    sensors.append(sensor_id)
+    data['sensors'] = sensors
+    with open(PATH_FILE, 'w') as file:
+        json.dump(data, file, indent=2)
+    return 'Sensor added successfully', 200
+
+#Elimina un sensor de la lista de sensores registrados, no se eliminan sus cids!
+def delete_sensor(sensor_id):
+    with open(PATH_FILE, 'r') as file:
+        data = json.load(file)
+    sensors = data.get('sensors', [])
+    if sensor_id not in sensors:
+        return 'Sensor not found', 404
+    sensors.remove(sensor_id)
+    data['sensors'] = sensors
+    with open(PATH_FILE, 'w') as file:
+        json.dump(data, file, indent=2)
+    return 'Sensor deleted successfully', 200
+
+#Guarda por cada sensor registrado sus cids uno a uno
+def save_cid(sensor_id, cid):
+    with open(PATH_FILE, 'r') as file:
+        data = json.load(file)
+    sensors = data.get('sensors', [])
+    if sensor_id not in sensors:
+        raise ValueError('Sensor not found')
+    cids = data.get('cids', {})
+    if sensor_id not in cids:
+        cids[sensor_id] = []
+    if cid not in cids[sensor_id]:
+        cids[sensor_id].append(cid)
+    data['cids'] = cids
+    with open(PATH_FILE, 'w') as file:
+        json.dump(data, file, indent=2)
