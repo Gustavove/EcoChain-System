@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import {backendGET} from "../controllers/backendComunication";
+import GeneralDashboard from "../components/generalDashboard";
 
 function Home(props) {
     return (<div>
                 <div>
-                    <h1>Response from API:</h1>
-                    <p>{JSON.stringify(props.data)}</p>
+                    <GeneralDashboard />
                 </div>
                </div>
     )

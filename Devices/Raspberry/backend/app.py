@@ -156,9 +156,8 @@ def get_all_last_sensor_info():
         info = config.get_cids_sensor(sensor_id)
         print('cid' + info[-1])
         data = json.loads(clientIPFS.getData(info[-1]))
-        result.append({sensor_id:data[3]['4']})
-    print(result)
-    return 'ok'
+        result.append(data[3]['4'])
+    return jsonify(result)
 
 
 @app.route('/test', methods=['GET'])
