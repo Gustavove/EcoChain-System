@@ -148,6 +148,19 @@ def get_all_cids_sensor():
     data = config.get_cids_sensor(sensor_id)
     return jsonify(data)
 
+@app.route('/sensor/all/lastinfo', methods=['GET'])
+def get_all_last_sensor_info():
+    registered_sensors = config.get_registered_sensors()
+    result = []
+    for sensor_id in registered_sensors:
+        info = config.get_cids_sensor(sensor_id)
+        print('cid' + info[-1])
+        data = json.loads(clientIPFS.getData(info[-1]))
+        result.append({sensor_id:data[3]['4']})
+    print(result)
+    return 'ok'
+
+
 @app.route('/test', methods=['GET'])
 def test():
 
