@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import {backendGET} from "../controllers/backendComunication";
+import { render } from 'react-dom';
+import { MapContainer, TileLayer} from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import Markers from "./Markers";
 
-function MapDevices(props) {
-    return (<div>
-            <div>
-                <h1>Response from API:</h1>
-                <p>{JSON.stringify(props.data)}</p>
-            </div>
-        </div>
-    )
+function MapDevices(props){
+    return (
+        <MapContainer center={{lat:'41.3180904', lng:'2.0098645'}} zoom={13}>
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Markers data={props.data}/>
+        </MapContainer>
+    );
+
 }
 
 export default MapDevices

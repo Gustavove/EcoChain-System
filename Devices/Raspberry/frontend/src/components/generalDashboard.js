@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Home from "../pages/home";
 import {backendGET} from "../controllers/backendComunication";
 import DevicesList from "./devicesList";
+import MapDevices from "./mapDevices";
 
 
 function GeneralDashboard(props) {
@@ -18,6 +19,9 @@ function GeneralDashboard(props) {
                 <div>
                     <DevicesList data={dataDevices} />
                 </div>
+            <div>
+                <MapDevices data={dataDevices}/>
+            </div>
             </div>
             )
 }
