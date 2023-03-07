@@ -2,13 +2,13 @@ CURL TESTINGS
 
 curl -d 'provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB' -X POST http://127.0.0.1:5000/provider/new
 
-curl -d 'data={"gps": {"latitude": "41.376966669024604", "longitude": "2.1546503841953832", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B7", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/sensor/adddata
+curl -d 'data={"gps": {"latitude": "41.3894451", "longitude": "2.1111765", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B5", "message": {"pH": "1", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/sensor/adddata
 
 http://127.0.0.1:5000/provider/getcids?provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB
 
 http://127.0.0.1:5000/provider/getcids?cid=QmaRx6iipiMiQZE76y3QiCQx76Y15ZhdGanLjgqYs7erMW&provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB
 
-curl -d 'id=00:1B:54:11:3A:B7' -X POST http://127.0.0.1:5000/sensor/new
+curl -d 'id=00:1B:54:11:3A:B8' -X POST http://127.0.0.1:5000/sensor/new
 
 curl -d 'id="00:1B:54:11:3A:B7' -X POST http://127.0.0.1:5000/sensor/remove'
 

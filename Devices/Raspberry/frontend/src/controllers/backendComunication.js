@@ -1,14 +1,14 @@
 import Home from "../pages/home";
 
 async function backendGET(url) {
-    return await fetch(url)
+    return fetch(url)
         .then(response => response.json())
         .catch(error => console.error(error));
 }
 
 //data in json format
 async function backendPOST(url, data) {
-    return  await fetch(url, {
+    return  fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

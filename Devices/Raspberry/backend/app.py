@@ -127,9 +127,8 @@ def new_sensor():
 
 @app.route('/sensor/remove', methods=['POST'])
 def remove_sensor():
-    sensor_id = request.form["id"]
-    #data = request.get_json()
-    #sensor_id = data.get('id')
+    data = request.get_json()
+    sensor_id = data.get('id')
     if sensor_id is not None:
         result, status_code = config.delete_sensor(sensor_id)
         return result, status_code

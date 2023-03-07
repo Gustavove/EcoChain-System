@@ -14,7 +14,6 @@ function MapDevices(props){
             <Markers data={props.data}/>
         </MapContainer>
     );
-
 }
 
 export default MapDevices

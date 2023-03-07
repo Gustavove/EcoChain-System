@@ -13,7 +13,13 @@ section {
 }
 
 .leaflet-container {
-  width: 99vw;
-  height: 100vh;
+  width: 50vw;
+  height: 70vh;
+}
 
+.abs-center {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  min-height: 100vh;
 }

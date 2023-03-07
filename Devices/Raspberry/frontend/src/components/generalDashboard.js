@@ -12,16 +12,21 @@ function GeneralDashboard(props) {
         backendGET("http://10.0.2.15:5000/sensor/all/lastinfo").then((data) => {
             setdataDevices(data);
         });
-
     }, []);
 
-    return (<div>
-                <div>
-                    <DevicesList data={dataDevices} />
-                </div>
-            <div>
-                <MapDevices data={dataDevices}/>
-            </div>
+    const onHandlebuttonUpdate = () => {
+        backendGET("http://10.0.2.15:5000/sensor/all/lastinfo").then((data) => {
+            setdataDevices(data);
+        });
+    }
+
+    return (<div className="abs-center">
+                    <div>
+                        <MapDevices data={dataDevices}/>
+                    </div>
+                    <div>
+                        <DevicesList data={dataDevices} onHandlebuttonUpdate={onHandlebuttonUpdate} />
+                    </div>
             </div>
             )
 }
