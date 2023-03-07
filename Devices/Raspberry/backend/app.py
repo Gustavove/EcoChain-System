@@ -116,9 +116,8 @@ def sensor_blockchain_getdata():
 
 @app.route('/sensor/new', methods=['POST'])
 def new_sensor():
-    sensor_id = request.form["id"]
-    #data = request.get_json()
-    #sensor_id = data.get('id')
+    data = request.get_json()
+    sensor_id = data.get('id')
     if sensor_id is not None:
         result, status_code = config.add_sensor(sensor_id)
         return result, status_code
@@ -157,6 +156,8 @@ def get_all_last_sensor_info():
         data = json.loads(clientIPFS.getData(info[-1]))
         result.append(data[3]['4'])
     return jsonify(result)
+
+
 
 
 @app.route('/test', methods=['GET'])

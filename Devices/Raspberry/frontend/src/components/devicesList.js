@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {backendPOST} from "../controllers/backendComunication";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import OptionPanel from "./optionPanel";
 
 
 function DevicesList(props) {
@@ -11,7 +12,9 @@ function DevicesList(props) {
             props.onHandlebuttonUpdate();
         });
     };
+
     return (
+        <>
         <Table striped bordered hover>
             <thead>
             <tr>
@@ -34,7 +37,8 @@ function DevicesList(props) {
             }
             </tbody>
         </Table>
-
+            <OptionPanel onUpdate={props.onHandlebuttonUpdate}/>
+        </>
     );
 }
 
