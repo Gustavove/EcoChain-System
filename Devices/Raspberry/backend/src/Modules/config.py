@@ -94,3 +94,15 @@ def get_cids_sensor(sensor_id):
         if sensor_id not in cids:
             return 'Sensor not found'
         return cids[sensor_id]
+def get_max_data_to_send():
+    with open(PATH_FILE, 'r') as f:
+        data = json.load(f)
+        return data['max_data_to_send']
+
+
+def set_max_data_to_send(value):
+    with open('config.json') as f:
+        data = json.load(f)
+    data["max_data_to_send"] = value
+    with open('config.json', 'w') as f:
+        json.dump(data, f)

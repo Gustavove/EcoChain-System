@@ -12,6 +12,9 @@ function DevicesList(props) {
             props.onHandlebuttonUpdate();
         });
     };
+    const handlebuttoninfo = (id) => {
+        props.onHandlebuttonEspecifidInfo(id)
+    }
 
     return (
         <>
@@ -30,7 +33,7 @@ function DevicesList(props) {
                 <tr key={item.mac}>
                     <td>{item.mac}</td>
                     <td>Active</td>
-                    <td> <Button variant="info">More info</Button></td>
+                    <td> <Button variant="info" onClick={() => handlebuttoninfo(item.mac)}>More info</Button></td>
                     <td> <Button variant="danger" onClick={() => handlebutton(item.mac)}> Delete Sensor </Button></td>
                 </tr>
                 ))

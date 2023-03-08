@@ -6,9 +6,10 @@
   "gasprice": 1,
   "max_data_to_send": 4,
   "sensors": [
-    "00:1B:54:11:3A:B8",
     "00:1B:54:11:3A:B7",
-    "00:1B:54:11:3A:B5"
+    "00:1B:54:11:3A:B5",
+    "00:1B:54:11:3A:B8",
+    "00:1B:54:11:3A:B4"
   ],
   "cids": {
     "00:1B:54:11:3A:B8": [
@@ -22,7 +23,11 @@
       "QmR9cmdWYmVmwFCBRDLUtGcGfZXQHtvD5Q95gyJK1Xx31k"
     ],
     "00:1B:54:11:3A:B5": [
-      "QmSnTEE8NCMzjYoCQevAPvwPXZGMcR9ubNNTzQ4zxeSACt"
+      "QmSnTEE8NCMzjYoCQevAPvwPXZGMcR9ubNNTzQ4zxeSACt",
+      "QmVJLbmoXgEpdjT31Zuw3o5BkM1tcJSzmGq5SWA2wUnCkk"
+    ],
+    "00:1B:54:11:3A:B4": [
+      "QmdrAMq9vaSNr361pYaJRcYhUShL5c9GNy3fqmkrZdhS3b"
     ]
   }
 }

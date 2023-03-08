@@ -157,6 +157,15 @@ def get_all_last_sensor_info():
         result.append(data[3]['4'])
     return jsonify(result)
 
+@app.route('/sensor/lastinfo', methods=['GET'])
+def get_last_info():
+    query_parameters = request.args
+    sensor_id = query_parameters.get("id")
+    info = config.get_cids_sensor(sensor_id)
+    data = json.loads(clientIPFS.getData(info[-1]))
+    result = {"data":data, "max_value":config.get_max_data_to_send()}
+    print(result)
+    return jsonify(result)
 
 
 

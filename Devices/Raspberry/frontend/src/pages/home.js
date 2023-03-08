@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import GeneralDashboard from "../components/generalDashboard";
-import MapDevices from "../components/mapDevices";
+import Dashboard from "../components/generalDashboard";
 
 function Home(props) {
     return (<div>
                 <div>
-                    <GeneralDashboard />
+                    <Dashboard />
                 </div>
             </div>
     )
