@@ -13,8 +13,6 @@ function EspecificDashboard(props) {
     return (
         <div>
             <h1>{props.data.data[value-1][value].mac}</h1>
-            {console.log(value)}
-            {console.log(props.data.data[value-1][value])}
             <div>
                 <Slidebar valor={props.data.max_value} onHandleValue={onHandleValue}/>
             </div>

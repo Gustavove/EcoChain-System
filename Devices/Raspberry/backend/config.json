@@ -9,7 +9,8 @@
     "00:1B:54:11:3A:B7",
     "00:1B:54:11:3A:B5",
     "00:1B:54:11:3A:B8",
-    "00:1B:54:11:3A:B4"
+    "00:1B:54:11:3A:B3",
+    "00:1B:54:11:3A:B2"
   ],
   "cids": {
     "00:1B:54:11:3A:B8": [
@@ -28,6 +29,9 @@
     ],
     "00:1B:54:11:3A:B4": [
       "QmdrAMq9vaSNr361pYaJRcYhUShL5c9GNy3fqmkrZdhS3b"
+    ],
+    "00:1B:54:11:3A:B3": [
+      "QmfDcBQjKH5vruXFWgQDScr1au3ScZ5Vfx2pTwvFwZhMvz"
     ]
   }
 }

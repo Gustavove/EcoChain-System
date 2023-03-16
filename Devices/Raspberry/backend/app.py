@@ -152,9 +152,12 @@ def get_all_last_sensor_info():
     result = []
     for sensor_id in registered_sensors:
         info = config.get_cids_sensor(sensor_id)
-        print('cid' + info[-1])
-        data = json.loads(clientIPFS.getData(info[-1]))
-        result.append(data[3]['4'])
+        if info != "Sensor hasn't cids":
+            data = json.loads(clientIPFS.getData(info[-1]))
+            result.append(data[3]['4'])
+        else:
+            result.append({'mac': sensor_id})
+    print(result)
     return jsonify(result)
 
 @app.route('/sensor/lastinfo', methods=['GET'])
