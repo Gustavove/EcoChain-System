@@ -23,7 +23,7 @@ function OptionPanel(props) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button variant="outline-secondary" onClick={handleShow}>
                 Add Device +
             </Button>
             <Modal show={showModal} onHide={handleClose}>

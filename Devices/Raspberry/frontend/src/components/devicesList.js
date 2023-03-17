@@ -25,6 +25,7 @@ function DevicesList(props) {
                 <th>Status</th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -33,7 +34,18 @@ function DevicesList(props) {
                 <tr key={item.mac}>
                     <td>{item.mac}</td>
                     <td>Active</td>
-                    <td> <Button variant="info" onClick={() => handlebuttoninfo(item.mac)}>More info</Button></td>
+                    <td> <Button variant="primary" onClick={() => handlebuttoninfo(item.mac)}>More info</Button></td>
+                    <td>
+                        <Button
+                            variant="info"
+                            onClick={() => {
+                                window.location.href = "http://localhost:5000/sensor/download/allinfo?id=" + item.mac;
+                            }}
+                            download
+                        >
+                            Download all data
+                        </Button>
+                    </td>
                     <td> <Button variant="danger" onClick={() => handlebutton(item.mac)}> Delete Sensor </Button></td>
                 </tr>
                 ))
