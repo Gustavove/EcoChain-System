@@ -155,7 +155,7 @@ def get_all_last_sensor_info():
         if info != "Sensor hasn't cids":
             data = clientIPFS.getData(info[-1])
             sensor_data = data
-            result.append(sensor_data[3]["4"])
+            result.append(sensor_data[3][str(config.get_max_data_to_send())])
         else:
             result.append({'mac': sensor_id})
     print(result)
