@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {backendPOST} from "../controllers/backendComunication";
+import {backendPOST} from "../../controllers/backendComunication";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import OptionPanel from "./optionPanel";

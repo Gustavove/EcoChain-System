@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import {backendPOST} from "../controllers/backendComunication";
+import {backendPOST} from "../../controllers/backendComunication";
 
 function OptionPanel(props) {
     const [showModal, setShowModal] = useState(false);
