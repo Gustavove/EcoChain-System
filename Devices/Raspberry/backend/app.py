@@ -187,7 +187,7 @@ def download_all_info_json():
 
     response_data = {sensor_id:result}
     response = make_response(response_data)
-    response.headers['Content-Disposition'] = 'attachment; filename=datos.json'
+    response.headers['Content-Disposition'] = 'attachment; filename=' + sensor_id + '.json'
     response.headers['Content-Type'] = 'application/json'
     return response
 
