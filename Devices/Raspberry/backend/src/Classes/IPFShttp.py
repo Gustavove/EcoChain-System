@@ -20,7 +20,8 @@ class IPFSconnection:
 			if contData == self.maxContData:
 				print("llega")
 				#AQUI DEBERIA DE IR CODIGO QUE COMPRUEBE QUE LOS DATOS Y LA FIRMA COINCIDEN
-				cid = self._client.add_json(temp_sensors_data.get_sensor_data(sensor_id))
+				info_to_add = json.loads(temp_sensors_data.get_sensor_data(sensor_id))
+				cid = self._client.add_json(info_to_add)
 				print('data uploaded: ' + str(temp_sensors_data.get_sensor_data(sensor_id)))
 				temp_sensors_data.delete_sensor_data(sensor_id)
 		return cid

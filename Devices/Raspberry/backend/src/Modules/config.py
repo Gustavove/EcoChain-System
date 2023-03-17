@@ -105,4 +105,4 @@ def set_max_data_to_send(value):
         data = json.load(f)
     data["max_data_to_send"] = value
     with open('config.json', 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)

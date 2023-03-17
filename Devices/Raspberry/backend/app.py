@@ -1,6 +1,6 @@
 from src.Classes.etheriumContract import EtheriumContract
 from src.Classes.IPFShttp import IPFSconnection
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file, make_response
 import calendar
 import time
 import binascii
@@ -153,8 +153,9 @@ def get_all_last_sensor_info():
     for sensor_id in registered_sensors:
         info = config.get_cids_sensor(sensor_id)
         if info != "Sensor hasn't cids":
-            data = json.loads(clientIPFS.getData(info[-1]))
-            result.append(data[3]['4'])
+            data = clientIPFS.getData(info[-1])
+            sensor_data = data
+            result.append(sensor_data[3]["4"])
         else:
             result.append({'mac': sensor_id})
     print(result)
@@ -165,10 +166,30 @@ def get_last_info():
     query_parameters = request.args
     sensor_id = query_parameters.get("id")
     info = config.get_cids_sensor(sensor_id)
-    data = json.loads(clientIPFS.getData(info[-1]))
+    data = clientIPFS.getData(info[-1])
     result = {"data":data, "max_value":config.get_max_data_to_send()}
     print(result)
     return jsonify(result)
+
+@app.route('/sensor/download/allinfo', methods=['GET'])
+def download_all_info_json():
+    query_parameters = request.args
+    sensor_id = query_parameters.get("id")
+
+    cids = config.get_cids_sensor(sensor_id)
+    result = []
+    if (cids != "Sensor hasn't cids"):
+        for cid in cids:
+            data = clientIPFS.getData(cid)
+            result.append({cid:data})
+    else:
+        result.append("Sensor hasn't data")
+
+    response_data = {sensor_id:result}
+    response = make_response(response_data)
+    response.headers['Content-Disposition'] = 'attachment; filename=datos.json'
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 

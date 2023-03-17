@@ -1,5 +1,5 @@
 {
-  "contract_address": "0x24eA9EC3cd45C7Ff3984486bd5834c4747ecd52e",
+  "contract_address": "0xdC2f5093fDebdD4058B5df7A282361A0fE412142",
   "url": "http://127.0.0.1:7545",
   "chainid": 1337,
   "gaslimit": 50000000,
@@ -7,31 +7,12 @@
   "max_data_to_send": 4,
   "sensors": [
     "00:1B:54:11:3A:B7",
-    "00:1B:54:11:3A:B5",
-    "00:1B:54:11:3A:B8",
-    "00:1B:54:11:3A:B3",
-    "00:1B:54:11:3A:B2"
+    "00:1B:54:11:3A:B8"
   ],
   "cids": {
-    "00:1B:54:11:3A:B8": [
-      "QmXuXr8u2rLjnYnwTVcPPbeKYqY6FSKWQ2LxJec74oaNT3",
-      "Qmc4cscV6esvzEmbB3uzjBJB8SBDbkzZTR9Hixp1KJeBr3",
-      "QmbRzJyR3VarFzFMhLCBfEjEkvEfJf5Bvy2RXVjE4FF9PA"
-    ],
     "00:1B:54:11:3A:B7": [
-      "QmPQsnAqAcX77GnzYhrquoNat5jmWFh994EdikbjGe2QCz",
-      "QmVm9uRuSL1PdVGfgWAPsFmEKBGKaMjCuuYHHZHiQmss7p",
-      "QmR9cmdWYmVmwFCBRDLUtGcGfZXQHtvD5Q95gyJK1Xx31k"
-    ],
-    "00:1B:54:11:3A:B5": [
-      "QmSnTEE8NCMzjYoCQevAPvwPXZGMcR9ubNNTzQ4zxeSACt",
-      "QmVJLbmoXgEpdjT31Zuw3o5BkM1tcJSzmGq5SWA2wUnCkk"
-    ],
-    "00:1B:54:11:3A:B4": [
-      "QmdrAMq9vaSNr361pYaJRcYhUShL5c9GNy3fqmkrZdhS3b"
-    ],
-    "00:1B:54:11:3A:B3": [
-      "QmfDcBQjKH5vruXFWgQDScr1au3ScZ5Vfx2pTwvFwZhMvz"
+      "QmX1L9EXPXuW83yQHiJ7bZrsGoDDw4H6TTz9KVGy3E4fHX",
+      "QmZwgtqLokQ7Stwws4C7Rm4j6Rph1R7NvA2iEd7pPApLWB"
     ]
   }
 }

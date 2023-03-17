@@ -10,7 +10,7 @@ def init():
     path_file = os.path.join(cwd, 'temp_sensors_data.json')
     if not os.path.isfile(path_file):
         with open(path_file, 'w') as file:
-            json.dump({}, file)
+            json.dump({}, file, indent=2)
 
 #Almacena los datos de un mismo sensor temporalmente, cada dato guardado tiene un id
 def save_sensor_data(sensor_id, data):
