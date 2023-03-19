@@ -1,11 +1,21 @@
 {
-  "contract_address": "0xe4B4DdEE3e8Faf91C62d005e98Ef3324e2936b09",
+  "contract_address": "0x37185c77A41880fC2cBEC9766935c6F87414fB88",
   "url": "http://127.0.0.1:7545",
   "chainid": 1337,
-  "gaslimit": 50000000,
+  "gaslimit": 6721975,
   "gasprice": 1,
   "max_data_to_send": 4,
   "sensors": [
-    "00:1B:54:11:3A:B7"
-  ]
+    "00:1B:54:11:3A:B7",
+    "00:1B:54:11:3A:B8"
+  ],
+  "cids": {
+    "00:1B:54:11:3A:B7": [
+      "Qma3dADqVTF27XarnmGm1KxMJ2yZVA4AcZ99Q5jkCBKY3N",
+      "QmRrpS3E2RNJMcRKZjmdE5KkzdgKrMQKXXiv1R7NWfYNBp"
+    ],
+    "00:1B:54:11:3A:B8": [
+      "QmYPPkyq2DibCHL32ZdN5iameGNefCsFNk1GESXosC3hcn"
+    ]
+  }
 }

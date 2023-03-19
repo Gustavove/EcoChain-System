@@ -80,6 +80,7 @@ contract StorageContract {
         require(Devices[recoveredAddress].SensorInfo[_mac].created == false, "Sensor has already added");
 
         Devices[recoveredAddress].SensorInfo[_mac].mac = _mac;
+        Devices[recoveredAddress].SensorInfo[_mac].created = true;
         Devices[recoveredAddress].SensorInfoList.push(_mac);
 
         emit EventSensorAdded(recoveredAddress, _mac, block.timestamp);
@@ -127,20 +128,35 @@ contract StorageContract {
         return Devices[_provider_address].SensorInfoList;
     }
 
-    function getCidList(address _provider_address, string memory _mac) public view returns (string[] memory) {
-        require(Devices[_provider_address].created == true, "Invalid provider address");
-        require(Devices[_provider_address].SensorInfo[_mac].created == true, "Invalid sensor MAC");
-        
-        return Devices[_provider_address].SensorInfo[_mac].SensorDataList;
-    }
-
     function getLastCID(address _provider_address, string memory _mac) public view returns (string memory) {
         require(Devices[_provider_address].created == true, "Invalid provider address");
         require(Devices[_provider_address].SensorInfo[_mac].created == true, "Invalid sensor MAC");
 
         uint256 len = Devices[_provider_address].SensorInfo[_mac].SensorDataList.length;
-        require(len > 0, "No data available for this sensor");
-
+        if (len == 0) {
+            return "Sensor hasn't cids";
+        }
         return Devices[_provider_address].SensorInfo[_mac].SensorDataList[len - 1];
+    }
+
+    function getAllCids(address _provider_address, string memory _mac) public view returns (string[] memory) {
+        require(Devices[_provider_address].created == true, "Invalid provider address");
+        require(Devices[_provider_address].SensorInfo[_mac].created == true, "Invalid sensor MAC");
+
+        uint256 len = Devices[_provider_address].SensorInfo[_mac].SensorDataList.length;
+
+        string[] memory cids = new string[](len);
+
+        if (len == 0) {
+            cids = new string[](1);
+            cids[0] = "Sensor hasn't cids";
+            return cids;
+        }
+
+        for (uint256 i = 0; i < len; i++) {
+            cids[i] = Devices[_provider_address].SensorInfo[_mac].SensorDataList[i];
+        }
+
+        return cids;
     }
 }

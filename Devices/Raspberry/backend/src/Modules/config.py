@@ -7,7 +7,7 @@ PATH_FILE = os.path.join(cwd, 'config.json')
 #DEFAULT INFO
 URL = 'http://127.0.0.1:7545'  # url of my ganche node
 CHAINID = 1337
-GASLIMIT = 50000000 #Gas maximo que puede consumir la transacción
+GASLIMIT = 6721975 #Gas maximo que puede consumir la transacción
 GAS_PRICE = 1 #incentivo para los mineros
 MAX_DATA_TO_SEND = 4
 

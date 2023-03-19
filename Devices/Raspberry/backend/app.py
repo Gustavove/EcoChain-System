@@ -1,6 +1,6 @@
 from src.Classes.etheriumContract import EtheriumContract
 from src.Classes.IPFShttp import IPFSconnection
-from flask import Flask, request, jsonify, send_file, make_response
+from flask import Flask, request, jsonify, make_response
 import calendar
 import time
 import binascii
@@ -34,7 +34,7 @@ def init():
     contract_address = config_info['contract_address']
     type_contract = 'already_deployed'
     if contract_address == 0x0:
-        contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 2000000)
+        contract_address = etheriumComunication.deployContract(MY_ADDRESS, MY_PRIVATE_KEY, PATH_SC_TRUFFLE + '/build/contracts/StorageContract.json', 3000000)
         config.new_contract(contract_address)
         config_info['contract_address'] = contract_address
         type_contract = 'new'
@@ -42,6 +42,7 @@ def init():
     response = {'contract_address': str(contract_address), 'type': type_contract}
     return jsonify(response)
 
+# PROVIDER API
 @app.route('/provider/new', methods=['POST'])
 def new_provider():
     provider_address = request.form["provider_address"]
@@ -50,6 +51,113 @@ def new_provider():
     param = [provider_address]
     etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newProvider(address)', param, 2000000)
     return 'ok'
+
+@app.route('/provider/blockchain/getall', methods=['GET'])
+def provider_blockchain_getall():
+    function = "getAllProviders()"
+    returned_types = ["address[]"]
+    values = []
+    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    print(str(cod))
+    return 'ok'
+@app.route('/provider/blockchain/getall/sensors', methods=['GET'])
+def get_blockchain_all_sensor():
+    query_parameters = request.args
+    provider_address = query_parameters.get("provider_address")
+    function = "getMacList(address)"
+    returned_types = ["string[]"]
+    values = [provider_address]
+    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    print(str(cod))
+    return 'ok'
+
+@app.route('/provider/blockchain/sensor/getall/lastinfo', methods=['GET'])
+def get_blockchain_all_sensors_lastinfo():
+    result = []
+    query_parameters = request.args
+    provider_address = query_parameters.get("provider_address")
+
+    #Obtenemos todos las mac de sensores de un proveedor
+    function = "getMacList(address)"
+    returned_types = ["string[]"]
+    values = [provider_address]
+    info_ids = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    sensors_ids = info_ids[0]
+
+    for sensor_id in sensors_ids:
+        # Obtenemos el ultimo cid de cada sensor
+        function = "getLastCID(address,string)"
+        returned_types = ["string"]
+        values = [provider_address, sensor_id]
+        info_cid = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+        lastcid = info_cid[0]
+
+        # Por cada cid obtenemos su informacion del ultimo envio
+        if lastcid != "Sensor hasn't cids":
+            data = clientIPFS.getData(lastcid)
+            sensor_data = data
+            result.append(sensor_data[3][str(config.get_max_data_to_send())])
+        else:
+            result.append({'mac': sensor_id})
+
+    print(result)
+    return jsonify(result)
+
+@app.route('/provider/blockchain/sensor/lastinfo', methods=['GET'])
+def get_blockchain_sensor_lastinfo():
+    result = []
+    query_parameters = request.args
+    provider_address = query_parameters.get("provider_address")
+    sensor_id = query_parameters.get("id")
+
+    # Obtenemos el ultimo cid
+    function = "getLastCID(address,string)"
+    returned_types = ["string"]
+    values = [provider_address, sensor_id]
+    info_cid = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    lastcid = info_cid[0]
+
+    # Obtenemos informacion del ultimo cid
+    if lastcid != "Sensor hasn't cids":
+        data = clientIPFS.getData(lastcid)
+        result = {"data": data, "max_value": config.get_max_data_to_send()}
+    else:
+        result.append({'mac': sensor_id})
+
+    print(result)
+    return jsonify(result)
+
+@app.route('/provider/blockchain/sensor/download/allinfo', methods=['GET'])
+def download_bloackchain__all_info_sensor_json():
+    query_parameters = request.args
+    provider_address = query_parameters.get("provider_address")
+    sensor_id = query_parameters.get("id")
+
+    # Obtenemos todos los cids de un sensor
+    function = "getAllCids(address,string)"
+    returned_types = ["string[]"]
+    values = [provider_address, sensor_id]
+    info_cid = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    cids = info_cid[0]
+
+    # Obtenemos los datos
+    result = []
+    for cid in cids:
+        if (cid != "Sensor hasn't cids"):
+            data = clientIPFS.getData(cid)
+            result.append({cid:data})
+        else:
+            result.append("Sensor hasn't data")
+
+    response_data = {sensor_id:result}
+    response = make_response(response_data)
+    response.headers['Content-Disposition'] = 'attachment; filename=' + sensor_id + '.json'
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
+
+
+# SENSOR API
 
 @app.route('/sensor/adddata', methods=['POST'])
 def new_data():
@@ -70,8 +178,15 @@ def new_data():
         data = (cid + 'https://ipfs.io/ipfs/' + cid + str(time_stamp))
         data_signed = etheriumComunication.signData(data, MY_PRIVATE_KEY)
         print(str(data_signed))
-        valor = [cid,'https://ipfs.io/ipfs/' + cid, time_stamp, data_signed.v, data_signed.r.to_bytes(32, byteorder='big'), data_signed.s.to_bytes(32, byteorder='big'), data_signed.messageHash]
-        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,uint256,uint8,bytes32,bytes32,bytes32)', valor, 2000000)
+        valor = [sensor_id,
+                 cid,
+                 'https://ipfs.io/ipfs/' + cid,
+                 time_stamp,
+                 data_signed.v,
+                 data_signed.r.to_bytes(32, byteorder='big'),
+                 data_signed.s.to_bytes(32, byteorder='big'),
+                 data_signed.messageHash]
+        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, 'newData(string,string,string,uint256,uint8,bytes32,bytes32,bytes32)', valor, 2000000)
 
         try:
             config.save_cid(sensor_id, cid)
@@ -81,45 +196,20 @@ def new_data():
         result = "Data uploaded to IPFS and blockchain with cid: " + cid
     return result
 
-
-@app.route('/provider/blockchain/getcids', methods=['GET'])
-def provider_blockchain_cids():
-    query_parameters = request.args
-    provider_address = query_parameters.get("provider_address")
-    function = "getDataProviderCids(address)"
-    values = [provider_address]
-    returned_types = ["string[]"]
-    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
-    print(str(cod))
-    return 'ok'
-
-@app.route('/provider/blockchain/getall', methods=['GET'])
-def provider_blockchain_getall():
-    function = "getAllDataProviders()"
-    returned_types = ["address[]"]
-    values = []
-    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
-    print(str(cod))
-    return 'ok'
-
-@app.route('/sensor/blockchain/getdata', methods=['GET'])
-def sensor_blockchain_getdata():
-    query_parameters = request.args
-    cid = query_parameters.get("cid")
-    provider_address = query_parameters.get("provider_address")
-    function = "getSensorData(string,address)"
-    returned_types = ['string','string','uint256','uint8','bytes32','bytes32','bytes32']
-    values = [cid, provider_address]
-    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
-    print(str(cod))
-    return 'ok'
-
 @app.route('/sensor/new', methods=['POST'])
 def new_sensor():
     data = request.get_json()
     sensor_id = data.get('id')
     if sensor_id is not None:
         result, status_code = config.add_sensor(sensor_id)
+        info = (sensor_id)
+        info_signed = etheriumComunication.signData(info, MY_PRIVATE_KEY)
+        valor = [sensor_id,
+                 info_signed.v,
+                 info_signed.r.to_bytes(32, byteorder='big'),
+                 info_signed.s.to_bytes(32, byteorder='big'),
+                 info_signed.messageHash]
+        etheriumComunication.makeTransaction(MY_ADDRESS, MY_PRIVATE_KEY, "newSensor(string,uint8,bytes32,bytes32,bytes32)", valor, 2000000)
         return result, status_code
     else:
         return 'Sensor id cannot be null', 400
@@ -190,7 +280,6 @@ def download_all_info_json():
     response.headers['Content-Disposition'] = 'attachment; filename=' + sensor_id + '.json'
     response.headers['Content-Type'] = 'application/json'
     return response
-
 
 
 @app.route('/test', methods=['GET'])
