@@ -1,7 +1,11 @@
+import React from "react";
+import DashboardExplorer from "../components/Explorer/generalDashboardExplorer";
+
 const Explorer = () => {
-    return (
-        <div>
-            <h1> VIEW EXPLORER </h1>
+    return (<div>
+            <div>
+                <DashboardExplorer />
+            </div>
         </div>
     )
 }
