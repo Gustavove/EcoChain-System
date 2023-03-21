@@ -3,7 +3,7 @@ import MapDevices from "../Maps/mapDevices";
 import Slidebar from "../slidebar";
 import Table from "react-bootstrap/Table";
 
-function EspecificDashboard(props) {
+function SensorDashboard(props) {
     const [value, setValue] = useState(1);
 
     function onHandleValue(value) {
@@ -41,4 +41,4 @@ function EspecificDashboard(props) {
         )
 }
 
-export default EspecificDashboard
+export default SensorDashboard

@@ -57,9 +57,9 @@ def provider_blockchain_getall():
     function = "getAllProviders()"
     returned_types = ["address[]"]
     values = []
-    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
-    print(str(cod))
-    return 'ok'
+    info_providers = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    providers_address = info_providers[0]
+    return jsonify({'providers_address':providers_address})
 @app.route('/provider/blockchain/getall/sensors', methods=['GET'])
 def get_blockchain_all_sensor():
     query_parameters = request.args
@@ -67,9 +67,10 @@ def get_blockchain_all_sensor():
     function = "getMacList(address)"
     returned_types = ["string[]"]
     values = [provider_address]
-    cod = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
-    print(str(cod))
-    return 'ok'
+    infoMACS = etheriumComunication.getValue(function, values, returned_types, MY_ADDRESS)
+    sensorsMAC = infoMACS[0]
+    return jsonify({'sensorsMAC':sensorsMAC})
+
 
 @app.route('/provider/blockchain/sensor/getall/lastinfo', methods=['GET'])
 def get_blockchain_all_sensors_lastinfo():
@@ -122,7 +123,7 @@ def get_blockchain_sensor_lastinfo():
         data = clientIPFS.getData(lastcid)
         result = {"data": data, "max_value": config.get_max_data_to_send()}
     else:
-        result.append({'mac': sensor_id})
+        result = {"message":"Sensor hasn't cids", "mac":sensor_id}
 
     print(result)
     return jsonify(result)

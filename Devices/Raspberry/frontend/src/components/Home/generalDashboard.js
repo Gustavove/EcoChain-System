@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Home from "../../pages/home";
 import {backendGET} from "../../controllers/backendComunication";
 import DevicesList from "./devicesList";
-import MapDevices from "./mapDevices";
+import MapDevices from "../Maps/mapDevices";
 import EspecificDashboard from "./especificDashboard";
 
 
