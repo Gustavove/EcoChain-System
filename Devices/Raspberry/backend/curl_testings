@@ -12,3 +12,5 @@ curl -d 'id=00:1B:54:11:3A:B8' -X POST http://127.0.0.1:5000/sensor/new
 
 curl -d 'id="00:1B:54:11:3A:B7' -X POST http://127.0.0.1:5000/sensor/remove'
 
+
+curl -d 'provider_address=0x808704d7C39F1402E8Bd5547F6369e00dDE24cD4' -X POST http://127.0.0.1:5000/provider/new
