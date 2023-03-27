@@ -162,10 +162,11 @@ def download_bloackchain__all_info_sensor_json():
 
 @app.route('/sensor/adddata', methods=['POST'])
 def new_data():
-    sensor_data = request.form["data"]
-    data = json.loads(sensor_data)
+    print(request.form)
+    #sensor_data = request.form["data"]
+    #data = json.loads(sensor_data)
+    data = request.get_json()
     sensor_id = data.get("mac")
-    print(sensor_id)
     cid = clientIPFS.addData(data, sensor_id)
 
     if cid == "":
