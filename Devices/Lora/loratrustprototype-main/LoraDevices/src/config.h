@@ -5,7 +5,7 @@
 
 //Wifi node info
 #define SERVER_IP "192.168.1.15"
-#define SERVER_PORT 443
+#define SERVER_PORT 80
 #define SC_ADDRESS "0xE36C2604F9701FFc6a04f8e6bE7368C3BC83329d"
 #define CHAIN_ID 1337
 
@@ -13,7 +13,7 @@
 #define MY_PRIVATEKEY "7a370c5e8c24e98319f5475cb5024aac5ca68a266d82ef0e2f25986027ab4114" 
 
 //WIFI configurations
-#define RUT_SSID "your-SIDD"
+#define RUT_SSID "YOUR_SSID"
 #define WIFIPWD "YOUR_PASSWORD"
 
 //LoRa configuration
