@@ -1,92 +1,21 @@
-
 #include <Arduino.h>
 #include "config.h"
 
 #ifdef NODE
+#include "string.h"
 #include "Transaction.h"
 #include "HttpEth.h"
 #include "Wallet.h"
 #include "Utils.h"
 #include "OLED.h"
 #include "LoraNode.h"
+#include <uECC.h>
+#include <SHA256.h>
 
 HttpEth httpEth;
 LoraNode lora;
 OLED display;
 
-String buildTransaction(String to_add, String private_key, int nonce, int price, int limit, int amount, String functionName) {
-    Transaction tx(nonce, price, limit, to_add, amount, functionName);
-    tx.sign(private_key);
-    return tx.getSigned();
-}
-
-String buildGetterTransaction(char* from_add, char* to_add, String data, String private_key) {
-    Transaction tx(from_add, to_add, data);
-    tx.sign(private_key);
-    return tx.getSigned();
-}
-
-String functionCallToData(String functionName, String par1, unsigned long long par2) {
-    String aux1 = Utils::pad32Bytes(par1);
-    String aux2 = Utils::pad32Bytes(Utils::longDecimalToHexString(par2));
-    uint8_t buf[50];
-    functionName.getBytes(buf, 50);
-    return Utils::hash(buf, functionName.length()).substring(0, 8) + aux1 + aux2;
-}
-
-String functionGetValue(String functionName) {
-    uint8_t buf[50];
-    functionName.getBytes(buf, 50);
-    return Utils::hash(buf, functionName.length()).substring(0, 8);
-}
-
-String getJSONRPC(String method, String params) {
-    return "{\"jsonrpc\": \"2.0\", \"method\": \"" + method + "\", \"params\": [" + params + "], \"id\":1}";
-}
-
-String getParamsWithData(String data) {
-    return "{\"from\": \"" + String(MY_ADDRESS) + "\", \"to\": \"" + String(SC_ADDRESS) + "\", \"chainId\": \"" + String(CHAIN_ID) + "\", \"data\": \"0x" + data + "\"}";
-}
-
-String getCallJSON(String functionName) {
-    String parsedFunctionName = functionGetValue(functionName);
-    String params = getParamsWithData(parsedFunctionName);
-    return getJSONRPC("eth_call", params);
-}
-
-String getRawTransactionJSONRPC(String params) {
-    return getJSONRPC("eth_sendRawTransaction", params);
-}
-
-String getTransactionCount(String address) {
-    return getJSONRPC("eth_getTransactionCount", "\"" + address + "\", \"latest\"");
-}
-
-String getFunctionCallToDataTest(String functionName) {
-    String address = String(MY_ADDRESS);
-
-    //Remove the 0x from the address
-    address.remove(0, 2);
-
-    String parsedAddress = Utils::pad32Bytes(address);
-    String parsedFunctionName = functionGetValue(functionName) + parsedAddress;
-    String params = getParamsWithData(parsedFunctionName);
-    return getJSONRPC("eth_call", params);
-}
-
-String getResultFromJSON(String json) {
-    int index = json.indexOf("result");
-    int finalIndex = json.indexOf("\"}");
-    String result = json.substring(index + 9, finalIndex);
-    return result;
-}
-
-int getNonce(String address) {
-    String json = httpEth.sendRawTransaction(getTransactionCount(address));
-    String result = getResultFromJSON(json);
-    result.remove(0, 2);
-    return Utils::hexStringToInt(result);
-}
 
 void setup() {
     Serial.begin(115200);
@@ -118,6 +47,51 @@ boolean runEvery(unsigned long interval) {
 }
 
 void loop() {
+
+    uint8_t privateKey[32] = {0xee,0x8c,0x2c,0xf0, 0x8d, 0x19, 0x37, 0x4b, 0xeb, 0x3a, 0xa9, 0xcd, 0xa9, 0xfa, 0x53, 0xaf, 0xe2, 0x68,0xdd, 0x91, 0xb5, 0xb1, 0x5a, 0xe5, 0xf5, 0x64, 0x5a, 0x20, 0x26, 0xf1, 0x26, 0x7d};
+    uint8_t publicKey[64];
+    const struct uECC_Curve_t* curve = uECC_secp256k1();
+    uECC_compute_public_key(privateKey, publicKey, curve);
+    char message[] = "Hola";
+
+    SHA256 sha256;
+    unsigned char message_hash[32];
+    sha256.update((const uint8_t*)message, strlen(message));
+    sha256.finalize(message_hash, sizeof(message_hash));
+
+    uint8_t signature[64];
+    //Firma no determinista, se utiliza un valor aleatorio para obtener la firma
+
+    uECC_sign(privateKey, message_hash, sizeof(message_hash), signature, curve);
+
+    // Convertir el arreglo de uint8_t en un arreglo de caracteres en hexadecimal
+    char signatureHex[2 * sizeof(signature) + 1];
+    for (int i = 0; i < sizeof(signature); i++) {
+        sprintf(&signatureHex[2 * i], "%02x", signature[i]);
+    }
+
+    // Convertir el arreglo de caracteres en un objeto String
+    String signatureString(signatureHex);
+
+    // Convertir el arreglo de uint8_t en un arreglo de caracteres en hexadecimal
+    char publicKeyHex[2 * sizeof(publicKey) + 1];
+    for (int i = 0; i < sizeof(publicKey); i++) {
+        sprintf(&publicKeyHex[2 * i], "%02x", publicKey[i]);
+    }
+
+    // Convertir el arreglo de caracteres en un objeto String
+    String publicKeyString(publicKeyHex);
+
+    String Address = Utils::hash(publicKey, PUBLIC_KEY_SIZE).substring(24, 64);
+
+    Serial.println("Firma=" + signatureString  + " Clave publica=" + publicKeyString + " @Address=" + Address);
+
+    if (uECC_verify(publicKey, message_hash, sizeof(message_hash), signature, curve)) {
+        Serial.println("La firma es válida");
+    } else {
+         Serial.println("La firma es inválida");
+    }
+
 
     if (runEvery(SENDINGTIME)) { // repeat every 1000 millis
 

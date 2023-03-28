@@ -5,6 +5,7 @@
 #include <uECC.h>
 #include <Preferences.h>
 #include "Utils.h"
+#include <string.h>
 
 #define PRIVATE_KEY_SIZE 32
 #define PUBLIC_KEY_SIZE 64

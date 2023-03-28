@@ -18,13 +18,6 @@ public:
     HttpEth();
     void initConnection(char*, char*, String, int);
     void listNetworks();
-    //Eth methods
-    void getAccountBalance();
-    String sendRawTransaction(String);
-    void getTransactionCount();
-    //void getSmartContractVariableValue();
-    void getOwnerAddress();
-    bool checkServerConnected();
 
     //Codigo Gustavo
     String sendData(String);
