@@ -6,6 +6,10 @@ from eth_account.messages import encode_defunct
 from eth_abi import encode_abi, decode_abi
 import pprint
 
+import ecdsa
+from hashlib import sha256
+
+
 pp = pprint.PrettyPrinter(indent=2)
 
 class EtheriumContract:
@@ -119,6 +123,16 @@ class EtheriumContract:
         decoded_data = decode_abi(_returned_types, returned_values)
 
         return decoded_data
+
+    def recover_address(self, message, signature):
+        message_hash = encode_defunct(text=message)
+        address = self.w3.eth.account.recover_message(message_hash, signature=signature)
+        return address
+    def verify_signature(self, message, public_key, signature):
+        message_encoded = message.encode()
+        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key), curve=ecdsa.SECP256k1,
+                                            hashfunc=sha256)  # the default is sha1
+        return vk.verify(bytes.fromhex(signature), message_encoded)  # True
 
     def deployContract(self, _myAddress, _myPrivateKey, _path_truffle, _gas):  # posiblemente no necesite ser un metodo
 

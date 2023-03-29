@@ -64,4 +64,5 @@ void Wallet::generateKeyAddress(bool reset) {
   }
 }
 
+
 Wallet wallet = Wallet();
