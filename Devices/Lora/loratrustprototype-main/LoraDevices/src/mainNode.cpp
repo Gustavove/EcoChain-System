@@ -2,6 +2,7 @@
 #include "config.h"
 
 #ifdef NODE
+#include "string.h"
 #include "HttpEth.h"
 #include "Wallet.h"
 #include "Utils.h"
@@ -18,8 +19,6 @@ OLED display;
 void setup() {
     Serial.begin(115200);
     Serial.println("Execution started");
-
-    //WIFI
 
     wallet.begin();
     Serial.print("pkey: ");
@@ -92,9 +91,10 @@ void loop() {
          Serial.println("La firma es inválida");
     }
 
+
     if (runEvery(SENDINGTIME)) { // repeat every 1000 millis
-        //sign_message(0xee8c2cf08d19374beb3aa9cda9fa53afe268dd91b5b15ae5f5645a2026f1267d,"hola", 4, firma)
-        httpEth.sendData("{\"gps\": {\"latitude\": \"41.3894451\",\"longitude\": \"2.1111765\",\"altitude\": \"150.44\"},\"mac\": \"00:1B:54:11:3A:B8\",\"message\": {\"pH\": \"5\",\"tds\": \"100\"},\"provider\": \"0x21e517bf6De93b1D783fEB84ddE42F589d845CEB\"}");           
+
+        httpEth.sendData("{\"gps\": {\"latitude\": \"41.3894451\",\"longitude\": \"2.1111765\",\"altitude\": \"150.44\"},\"mac\": \"00:1B:54:11:3A:B8\",\"message\": {\"pH\": \"5\",\"tds\": \"100\"},\"provider\": \"0x21e517bf6De93b1D783fEB84ddE42F589d845CEB\"}");
     }
 
 }

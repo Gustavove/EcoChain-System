@@ -34,7 +34,6 @@ int Wallet::RNG(uint8_t* dest, unsigned size) {
     ++dest;
     --size;
   }
-  // fer un hash de les dades aqui seria bo
   return 1;
 }
 
