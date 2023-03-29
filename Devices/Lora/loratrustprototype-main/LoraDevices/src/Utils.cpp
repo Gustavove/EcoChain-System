@@ -53,6 +53,7 @@ String Utils::longDecimalToHexString(unsigned long long n) {
     return hex_value;
 }
 
+
 String Utils::hash(String data) {
     int datasize = data.length() / 2;
     uint8_t result[datasize];

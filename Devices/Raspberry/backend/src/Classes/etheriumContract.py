@@ -7,7 +7,7 @@ from eth_abi import encode_abi, decode_abi
 import pprint
 
 import ecdsa
-from hashlib import sha256
+import hashlib
 
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -128,10 +128,10 @@ class EtheriumContract:
         message_hash = encode_defunct(text=message)
         address = self.w3.eth.account.recover_message(message_hash, signature=signature)
         return address
+
     def verify_signature(self, message, public_key, signature):
         message_encoded = message.encode()
-        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key), curve=ecdsa.SECP256k1,
-                                            hashfunc=sha256)  # the default is sha1
+        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key), curve=ecdsa.SECP256k1,  hashfunc=hashlib.sha3_256)  # the default is sha1
         return vk.verify(bytes.fromhex(signature), message_encoded)  # True
 
     def deployContract(self, _myAddress, _myPrivateKey, _path_truffle, _gas):  # posiblemente no necesite ser un metodo

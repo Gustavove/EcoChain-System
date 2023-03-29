@@ -45,7 +45,7 @@ boolean runEvery(unsigned long interval) {
     return false;
 }
 
-// Estrucutura y funciones de contexto para firma determinista
+/* Estrucutura y funciones de contexto para firma determinista
 typedef struct SHA256_HashContext {
     uECC_HashContext uECC;
 } SHA256_HashContext;
@@ -67,7 +67,7 @@ void finish_SHA256(const uECC_HashContext *base, uint8_t *hash_result) {
     SHA256 sha256;
     sha256.finalize(hash_result, 32);
 }
-
+*/
 
 void loop() {
 
@@ -75,29 +75,29 @@ void loop() {
     uint8_t publicKey[64];
     const struct uECC_Curve_t* curve = uECC_secp256k1();
     uECC_compute_public_key(privateKey, publicKey, curve);
-    char message[] = "Holaa";
-
-    SHA256 sha256;
-    unsigned char message_hash[32];
-    sha256.update((const uint8_t*)message, strlen(message));
-    sha256.finalize(message_hash, sizeof(message_hash));
-
+    char message[] = "Hola";
     uint8_t signature[64];
 
 
-    // Se genera la firma determinista
+    /* Se genera la firma determinista
     uint8_t tmp[32 + 32 + 64];
     SHA256_HashContext ctx = {{&init_SHA256, &update_SHA256, &finish_SHA256, 64, 32, tmp}};
     uECC_sign_deterministic(privateKey, message_hash, 32, &ctx.uECC, signature, curve);
+    */ 
 
-    /*Firma no determinista, se utiliza un valor aleatorio para obtener la firma
-    SHA256 sha256;
-    unsigned char message_hash[32];
-    sha256.update((const uint8_t*)message, strlen(message));
-    sha256.finalize(message_hash, sizeof(message_hash));
+    // Firma no determinista, se utiliza un valor aleatorio para obtener la firma
+    //SHA256 sha256;
+    uint8_t message_hash[32];
+    //sha256.reset();
+    //sha256.update((const uint8_t*)message, strlen(message));
+    //sha256.finalize(message_hash, sizeof(message_hash));
+
+    //Con keccak (SHA3-256)
+    String messagePrehashed = Utils::hash(message);
+    Utils::stringToByteArray(messagePrehashed, message_hash);
+
     uECC_sign(privateKey, message_hash, sizeof(message_hash), signature, curve);
-    */
-
+    
     // Convertir el arreglo de uint8_t en un arreglo de caracteres en hexadecimal
     char signatureHex[2 * sizeof(signature) + 1];
     for (int i = 0; i < sizeof(signature); i++) {
@@ -125,7 +125,6 @@ void loop() {
     } else {
          Serial.println("La firma es inválida");
     }
-
 
     if (runEvery(SENDINGTIME)) { // repeat every 1000 millis
 

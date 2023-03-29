@@ -314,7 +314,7 @@ def test():
     return 'ok'
 
 if __name__ == "__main__":
-    result = etheriumComunication.verify_signature("Hola", '8d5b30b642961f9096a40e8cae4be79038165435580e218e481b8e0a4126cc5d6f96290c84f7be3f29c3a0c5bfdb7fbfef1f63b2ede4cfcb920024fc18c53be6', '082e26c62ad9782277568bc09c1025a0acc94284f8b7a3ea53dae3a102d668ff31828fdcf1ee2c3fd88d9a4e69da6c2384a3bc9b10fd0b9271693edf962e3f81')
+    result = etheriumComunication.verify_signature("Hola", '8d5b30b642961f9096a40e8cae4be79038165435580e218e481b8e0a4126cc5d6f96290c84f7be3f29c3a0c5bfdb7fbfef1f63b2ede4cfcb920024fc18c53be6', '546f686a7c5ae4699f710d39604c9b285bd7dcd7f6ff7a773268aed627f481406350702cf28f782c59353b493623c9ee5fff975889546fdc203f822ffae80c55')
     print(result)
     app.run(debug=True, host='0.0.0.0')
 
