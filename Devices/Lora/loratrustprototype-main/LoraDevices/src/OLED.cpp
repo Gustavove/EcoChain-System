@@ -30,7 +30,7 @@ void OLED::scrollText(String data) {
   disp.clearDisplay();
 
 #ifdef NODE
-  data = "NODE WALLET @:\n\n0x" + data;
+  data = "MAC @:\n\n" + data;
 #else
   data = "GW WALLET @:\n\n0x" + data;
 #endif
