@@ -29,7 +29,7 @@ void setup() {
     Serial.print("starting wifi connection: ");
 
     httpEth.listNetworks();
-    httpEth.initConnection(RUT_SSID, WIFIPWD, SERVER_IP, SERVER_PORT);
+    httpEth.initConnection((char*)RUT_SSID, (char*)WIFIPWD, SERVER_IP, SERVER_PORT);
 
     Serial.print("MAC: ");
     Serial.println(WiFi.macAddress());
