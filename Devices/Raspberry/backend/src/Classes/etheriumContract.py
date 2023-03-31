@@ -125,6 +125,7 @@ class EtheriumContract:
         return decoded_data
 
     def string_to_arraybytes(self, hex_string):
+        hex_string = hex_string.strip()
         hex_values = hex_string.split(" ")  # Separar la cadena por los espacios
         byte_list = []
         for hex_val in hex_values:
@@ -135,33 +136,25 @@ class EtheriumContract:
         # Crear objeto AES y establecer la clave
         aes = AES.new(key, AES.MODE_ECB)
 
-        print(len(ciphertext))
-
         # Dividir el ciphertext en bloques de 16 bytes y desencriptar cada bloque
         result = []
         for i in range(0, len(ciphertext), 16):
             block = ciphertext[i:i + 16]
-            print(block)
             decrypted_block = aes.decrypt(bytes(block))
             # Convertir el bloque desencriptado en una lista de bytes y agregarlo a la lista `result`
             result.extend(decrypted_block)
 
-            print('result' + str(i))
-            print(result)
-            print('result')
-
-
         # Convertir la lista `result` en un objeto bytes y devolverlo
         return bytes(result)
 
-    def decrypt(self, message, key_):
-        key = bytes([0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10,
-             0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10])
-        ciphertext = self.string_to_arraybytes("14 7D 7B 5A 3 36 84 A1 FB 4B 63 5F 80 A8 3F BC 89 71 B8 58 9 DC 2 44 29 7E E8 BF 31 A5 70 EC 89 93 A9 7 8E 58 6E 58 51 69 AC 17 B3 D8 49 ED 3C 9E 35 8E D2 C3 0 24 FD 2B 1C D1 EC 3 F5 57 8C 98 45 D4 F0 C5 FD 9 7 DF 1A 8C BC 52 7 CD F3 9D 77 31 40 B1 DB 2D 37 B8 F7 FD C1 3D E5 47 3C 91 BE 9B 93 F3 67 2F 43 56 78 B2 D 6F 87 C8 94 F3 40 87 BA 5D 94 6C 5A AB 88 F7 DE FC 7E D5 E1 24 A1 ED D BF 8B 53 CD 46 AB 8E 93 AC AE 95")
-
+    def decrypt(self, message, key):
+        ciphertext = self.string_to_arraybytes(message)
         result = self.decrypt_message(key, ciphertext)
-        print(result)
-        return 'ok'
+
+        decoded_str = result.decode("utf-8")  # Decodificar el byte a string
+        json_data = decoded_str.rstrip('0')
+
+        return json_data
 
     def deployContract(self, _myAddress, _myPrivateKey, _path_truffle, _gas):  # posiblemente no necesite ser un metodo
 

@@ -25,6 +25,9 @@ etheriumComunication = EtheriumContract(config_info['url'],
                                         config_info['contract_address'])
 clientIPFS = IPFSconnection(config_info['max_data_to_send'])
 
+AES_KEY = bytes([0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10,
+             0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10])
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
@@ -162,12 +165,14 @@ def download_bloackchain__all_info_sensor_json():
 
 @app.route('/sensor/adddata', methods=['POST'])
 def new_data():
-    print(request.form)
     #sensor_data = request.form["data"]
     #data = json.loads(sensor_data)
     data = request.get_json()
-    sensor_id = data.get("mac")
-    cid = clientIPFS.addData(data, sensor_id)
+    encrypted_data = data.get("data")
+    content = etheriumComunication.decrypt(encrypted_data, AES_KEY)
+    result = json.loads(content)
+    sensor_id = result['mac']
+    cid = clientIPFS.addData(content, sensor_id)
 
     if cid == "":
         result = "Data uploaded to provider"
@@ -313,9 +318,19 @@ def test():
 
     return 'ok'
 
-if __name__ == "__main__":
-    result = etheriumComunication.decrypt('h', 'k')
+@app.route('/test2', methods=['POST'])
+def test2():
+
+    data = request.get_json()
+    content = data.get("data")
+
+    result = etheriumComunication.decrypt(content, AES_KEY)
     print(result)
+
+    return 'Ok', 200
+
+
+if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
 
 # para almacenar bytes smartcontract: ej value4 = data_signed.signature.ljust(32, b'\x00'), para decodificar: decoded_value = binascii.hexlify(value3)
