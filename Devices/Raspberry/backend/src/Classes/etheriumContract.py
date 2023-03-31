@@ -6,8 +6,8 @@ from eth_account.messages import encode_defunct
 from eth_abi import encode_abi, decode_abi
 import pprint
 
-import ecdsa
-import hashlib
+from Crypto.Cipher import AES
+import base64
 
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -124,15 +124,18 @@ class EtheriumContract:
 
         return decoded_data
 
-    def recover_address(self, message, signature):
-        message_hash = encode_defunct(text=message)
-        address = self.w3.eth.account.recover_message(message_hash, signature=signature)
-        return address
+    def decrypt(self, message, key_):
+        key = bytes([0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10,
+             0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10])
+        ciphertext = ciphertext = bytes([0xD9, 0xC9, 0xAA, 0x51, 0x95, 0xE9, 0x22, 0xBA, 0xAC, 0xD0, 0x5F, 0xA7, 0x47, 0x0E, 0xA1, 0x84])
 
-    def verify_signature(self, message, public_key, signature):
-        message_encoded = message.encode()
-        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_key), curve=ecdsa.SECP256k1,  hashfunc=hashlib.sha3_256)  # the default is sha1
-        return vk.verify(bytes.fromhex(signature), message_encoded)  # True
+        # Crear el objeto AES y descifrar el mensaje
+        cipher = AES.new(key, AES.MODE_ECB)
+        plaintext = cipher.decrypt(ciphertext)
+
+        print(plaintext.decode())
+        # Imprimir el mensaje descifrado como una cadena de caracteres
+        return 'ok'
 
     def deployContract(self, _myAddress, _myPrivateKey, _path_truffle, _gas):  # posiblemente no necesite ser un metodo
 
