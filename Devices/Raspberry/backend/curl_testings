@@ -2,7 +2,7 @@ CURL TESTINGS
 
 curl -d 'provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB' -X POST http://127.0.0.1:5000/provider/new
 
-curl -d 'data={"gps": {"latitude": "41.3894451", "longitude": "2.1111765", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "5", "tds": "100"}, "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"}' -X POST http://127.0.0.1:5000/sensor/adddata
+curl -d 'data={"gps": {"latitude": "41.3894451", "longitude": "2.1111765", "altitude": "150.44"}, "mac": "00:1B:54:11:3A:B8", "message": {"pH": "5", "tds": "100"}}' -X POST http://127.0.0.1:5000/sensor/adddata
 
 http://127.0.0.1:5000/provider/getcids?provider_address=0x21e517bf6De93b1D783fEB84ddE42F589d845CEB
 
@@ -14,3 +14,5 @@ curl -d 'id="00:1B:54:11:3A:B7' -X POST http://127.0.0.1:5000/sensor/remove'
 
 
 curl -d 'provider_address=0x808704d7C39F1402E8Bd5547F6369e00dDE24cD4' -X POST http://127.0.0.1:5000/provider/new
+
+ssh -R lora:80:localhost:5000 serveo.net

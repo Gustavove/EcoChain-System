@@ -172,7 +172,7 @@ def new_data():
     content = etheriumComunication.decrypt(encrypted_data, AES_KEY)
     result = json.loads(content)
     sensor_id = result['mac']
-    cid = clientIPFS.addData(content, sensor_id)
+    cid = clientIPFS.addData(result, sensor_id)
 
     if cid == "":
         result = "Data uploaded to provider"
