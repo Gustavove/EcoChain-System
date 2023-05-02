@@ -9,32 +9,11 @@
 #include "OLED.h"
 #include "LoraNode.h"
 #include "AES.h"
+#include <time.h>
 
 HttpEth httpEth;
 LoraNode lora;
 OLED display;
-
-void setup() {
-    Serial.begin(115200);
-    Serial.println("Execution started");
-
-    wallet.begin();
-    Serial.print("pkey: ");
-    Serial.println(wallet.getAddress());
-
-    lora.begin(wallet.getAddress().substring(0, 4));
-
-    display.begin();
-    display.scrollText(WiFi.macAddress());
-    
-    Serial.print("starting wifi connection: ");
-
-    httpEth.listNetworks();
-    httpEth.initConnection(RUT_SSID, WIFIPWD, SERVER_IP, SERVER_PORT);
-
-    Serial.print("MAC: ");
-    Serial.println(WiFi.macAddress());
-}
 
 boolean runEvery(unsigned long interval) {
     static unsigned long previousMillis = 0;
@@ -89,30 +68,74 @@ void padding(char* temp){
     }
 }
 
+// a string to hold NTP server to request epoch time
+const char* ntpServer = "pool.ntp.org";
+
+// Variable to hold current epoch timestamp
+unsigned long Epoch_Time; 
+
+// Get_Epoch_Time() Function that gets current epoch time
+unsigned long Get_Epoch_Time() {
+  time_t now;
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    //Serial.println("Failed to obtain time");
+    return(0);
+  }
+  time(&now);
+  return now;
+}
+
+//Valor dummy
 int num = 4;
+
+void setup() {
+    Serial.begin(115200);
+    Serial.println("Execution started");
+
+    wallet.begin();
+    Serial.print("pkey: ");
+    Serial.println(wallet.getAddress());
+
+    lora.begin(wallet.getAddress().substring(0, 4));
+
+    display.begin();
+    display.scrollText(WiFi.macAddress());
+    
+    Serial.print("starting wifi connection: ");
+
+    httpEth.listNetworks();
+    httpEth.initConnection(RUT_SSID, WIFIPWD, SERVER_IP, SERVER_PORT);
+
+    Serial.print("MAC: ");
+    Serial.println(WiFi.macAddress());
+
+    configTime(0, 0, ntpServer);
+
+}
 
 
 void loop() {
 
     char cadena[5];
     
-    if (runEvery(SENDINGTIME)) { // repeat every 1000 millis
+    if (runEvery(10000)) { // repeat every 10 seconds
     uint8_t key[32] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10};
 
     char temp[208]; // Cadena temporal para construir la cadena final
 
-    sprintf(temp, "{\"gps\": {\"latitude\": \"41.3894451\",\"longitude\": \"2.1111765\",\"altitude\": \"150.44\"},\"mac\":\"%s\",\"message\": {\"pH\":\"%d\",\"tds\": \"100\"}}", WiFi.macAddress().c_str(), num);
+    sprintf(temp, "{\"gps\": {\"latitude\": \"41.3894451\",\"longitude\": \"2.1111765\",\"altitude\": \"150.44\"},\"mac\":\"%s\",\"message\":{\"pH\":\"%d\",\"tds\":\"100\"},\"timestamp\":\"%lu\"}", WiFi.macAddress().c_str(), num%10,Get_Epoch_Time());
 
-    //Añadimos 0s a la cadena spara que sea multiple de 16
+    //Añadimos 0s a la cadena para que sea multiple de 16
     padding(temp);
 
     // Copiamos la cadena a la variable text para que sea uint_8
     uint8_t text[strlen(temp)];
     strncpy((char*)text, temp, strlen(temp));
 
-    //uint8_t text[] = "Hoolaaaaaaaa0000";
-
     printf("El tamaño de la cadena es: %zu\n", sizeof(text));
+
+    Serial.print("\n");
 
     uint8_t ciphertextmessage[sizeof(text)];
 
@@ -123,6 +146,7 @@ void loop() {
     for (int i = 0; i < sizeof(text); i++) {
         Serial.print((char)text[i]);
     }
+
     Serial.print("\n");
 
     Serial.print("Ciphertext: ");

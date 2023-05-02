@@ -10,8 +10,8 @@
 #define CHAIN_ID 1337
 
 //WIFI configurations
-#define RUT_SSID "YOUR_SSID"
-#define WIFIPWD "YOUR_PASSWORD"
+#define RUT_SSID "Livebox6-9480_EXT"
+#define WIFIPWD "cMS4zxcx5cau"
 
 //LoRa configuration
 #define FREQUENCY  866E6 // LoRa Frequency
