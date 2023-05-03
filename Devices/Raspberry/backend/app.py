@@ -264,7 +264,7 @@ def get_last_info():
     sensor_id = query_parameters.get("id")
     info = config.get_cids_sensor(sensor_id)
     data = clientIPFS.getData(info[-1])
-    result = {"data":data, "max_value":config.get_max_data_to_send()}
+    result = {"data":data, "max_value": config.get_max_data_to_send()}
     print(result)
     return jsonify(result)
 
