@@ -7,19 +7,28 @@ The following code is based on a prototype, and its usage should be used in a te
 
 ## Table of Contents
 
-- [Technologies](#technologies)
+- [Technologies and frameworks](#technologies-and-frameworks)
 - [Install](#install)
-  - [LoRa devices](#LoRa devices)
-  - [Descentralized services (IPFS, Etherium)](#Descentralized services)
+  - [LoRa devices](#lora-devices)
+  - [Descentralized services (IPFS, Etherium)](#Descentralized-services)
   - [Backend](#backend)
   - [Frontend](#frontend)
 - Tests
-  - [Getting started](#getting started)
-  - [Device managing](#device managing)
-- [Known issues](#known issues)
+  - [Getting started](#getting-started)
+  - [Device managing](#device-managing)
+- [Known issues](#known-issues)
 
-## Technologies
+## Technologies and frameworks
+* [Node.js](https://nodejs.org/): Version 18.9.0
+* [npm.js](https://www.npmjs.com/): Version 8.19.2
+* [Platformio for Visual Studio](https://platform.io/)
+* [Kubo -IPFS](https://dist.ipfs.tech/kubo/v0.17.0/kubo_v0.17.0_linux-amd64.tar.gz) Version 0.17.0
+* [React-boostrap](https://react-bootstrap.github.io/)
+* [Truffle suite](https://trufflesuite.com/) and [Ganache](https://trufflesuite.com/ganache/)
+* [Python](https://www.python.org/)
+
 ## Install
 
+### LoRa devices
 
 
