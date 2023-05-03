@@ -48,7 +48,7 @@ void HttpEth::initConnection(char* ssid, char* pwd, String ip, int port) {
 
 String HttpEth::sendData(String message) {
   HTTPClient http;
-  http.begin("https://lora.serveo.net/sensor/adddata");
+  http.begin("https://putus.serveo.net/sensor/adddata");
   http.addHeader("User-Agent", "LoRA/1.0", true, true);
   http.addHeader("Content-Type", "application/json", true, true);
   Serial.println(message);
