@@ -15,6 +15,7 @@ The following code is based on a prototype, and its usage should be used in a te
   - [Frontend](#frontend)
 - [Getting started](#getting-started)
 - [Known issues](#known-issues)
+- [License](#license)
 
 ## Technologies and frameworks
 * [Node.js](https://nodejs.org/): Version 18.9.0
@@ -167,3 +168,28 @@ Inicialize frontend to depploy the contract and later add a provider
 curl -d 'provider_address=0x808704d7C39F1402E8Bd5547F6369e00dDE24cD4' -X POST http://127.0.0.1:5000/provider/new
 ```
 Add the MAC of a sensor in the frontend to allow it to upload data to the system
+
+## Known issues
+
+* Permission denied: '/dev/ttyACM0'
+```bash
+sudo chmod a+rw /dev/ttyACM0
+```
+
+* If the boards do not flash click on PPG button, usually happens if they are broken.
+
+* VersionMismatch: Unsupported daemon version '0.17.0' (not in range: 0.5.0 ≤ … < 0.15.0)
+
+Modify the library in the local environment
+
+```Python
+...
+VERSION_MINIMUM   = "0.5.0"
+VERSION_BLACKLIST = []
+VERSION_MAXIMUM   = "0.18.0"
+...
+```
+
+## License
+
+This code is under the terms of the [MIT license](https://opensource.org/licenses/MIT)
