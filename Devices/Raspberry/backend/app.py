@@ -264,7 +264,7 @@ def get_last_info():
     sensor_id = query_parameters.get("id")
     info = config.get_cids_sensor(sensor_id)
     data = clientIPFS.getData(info[-1])
-    result = {"data":data, "max_value": config.get_max_data_to_send()}
+    result = {"data":data, "max_value":config.get_max_data_to_send()}
     print(result)
     return jsonify(result)
 
@@ -287,47 +287,6 @@ def download_all_info_json():
     response.headers['Content-Disposition'] = 'attachment; filename=' + sensor_id + '.json'
     response.headers['Content-Type'] = 'application/json'
     return response
-
-
-@app.route('/test', methods=['GET'])
-def test():
-
-    """ data = {"gps": {"latitude": "41.376966669024604",
-                            "longitude": "2.1546503841953832",
-                            "altitude": "150.44"},
-                    "mac": "00:1B:54:11:3A:B7",
-                    "message": {"pH": "1",
-                                "tds": "100"},
-                    "provider": "0x21e517bf6De93b1D783fEB84ddE42F589d845CEB"} """
-
-    cid = 'QmYevdNueNL243CNzd3PExfeVBZmgesFGXmxbbhTbxte7B'
-    current_GMT = time.gmtime()
-    time_stamp = calendar.timegm(current_GMT)
-
-    data = str(
-                {'cid': cid,
-                 'url':'https://ipfs.io/ipfs/' + cid,
-                 'time_stamp': str(time_stamp)}
-               )
-
-    data_signed = etheriumComunication.signData(data, '8a30ed9c3bf9f8270a180f312fd3bda19a8ef5a9346f8d984b5405d864d9a98c')
-    print(str(data_signed))
-    valor = [data_signed.v, data_signed.r.to_bytes(32, byteorder='big'), data_signed.s.to_bytes(32, byteorder='big'), data_signed.messageHash]
-
-    etheriumComunication.makeTransaction('0xD62b91863401862a9e2a4fF7f71c332b8d55Ff31', '32957d5252f821bdb86fb61f28234e29623e33f4c4b1103fd22c81bd3c9384bc', 'test(uint8,bytes32,bytes32,bytes32)', valor, 2000000)
-
-    return 'ok'
-
-@app.route('/test2', methods=['POST'])
-def test2():
-
-    data = request.get_json()
-    content = data.get("data")
-
-    result = etheriumComunication.decrypt(content, AES_KEY)
-    print(result)
-
-    return 'Ok', 200
 
 
 if __name__ == "__main__":
