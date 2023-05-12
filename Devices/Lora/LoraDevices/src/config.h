@@ -1,7 +1,7 @@
 #ifndef config_H
 #define config_H
 
-#define NODE  //Define if using node or comment to compile gateway  if defined, then NODE, in not defined, then GW.
+//#define NODE Define if using node or comment to compile gateway  if defined, then NODE, in not defined, then GW.
 
 //Wifi node info
 #define SERVER_IP "192.168.1.15"

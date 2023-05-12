@@ -46,3 +46,69 @@ void OLED::scrollText(String data) {
   delay(2000);*/
 }
 
+void OLED::scrollText_nom(String data) {
+  disp.clearDisplay();
+
+  String line2 = "MAC @: \n" + data;
+  String line1 = "Desarrollo de una aplicacion IoT basada en IPFS y blockchain";
+
+  disp.setTextSize(1);
+  disp.setTextColor(SSD1306_WHITE);
+  disp.setCursor(0, 0);
+  disp.println(line1);
+  disp.display();
+  delay(7000);
+  disp.clearDisplay();
+  disp.setCursor(0, 0);
+  disp.println(line2);
+  disp.display();
+}
+
+void OLED::parpadeo(String data) {
+
+  String line1 = "MAC @: \n" + data;
+
+  disp.invertDisplay(true);
+  delay(500);
+  disp.clearDisplay();
+  disp.invertDisplay(false);
+  disp.setTextSize(1);
+  disp.setTextColor(SSD1306_WHITE);
+  disp.setCursor(0, 0);
+  disp.println(line1);
+  disp.display();
+}
+
+void OLED::gateway() {
+  disp.clearDisplay();
+
+  String line2 = "Gateway";
+  String line1 = "Desarrollo de una aplicacion IoT basada en IPFS y blockchain";
+
+  disp.setTextSize(1);
+  disp.setTextColor(SSD1306_WHITE);
+  disp.setCursor(0, 0);
+  disp.println(line1);
+  disp.display();
+  delay(7000);
+  disp.clearDisplay();
+  disp.setCursor(0, 0);
+  disp.println(line2);
+  disp.display();
+}
+
+void OLED::gateway_parpadeo(String data) {
+  disp.clearDisplay();
+
+  String line1 = "Message received: "  + data;
+
+  disp.invertDisplay(true);
+  delay(500);
+  disp.clearDisplay();
+  disp.invertDisplay(false);
+  disp.setTextSize(1);
+  disp.setTextColor(SSD1306_WHITE);
+  disp.setCursor(0, 0);
+  disp.println(line1);
+  disp.display();
+}

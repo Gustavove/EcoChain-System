@@ -100,7 +100,7 @@ void setup() {
     lora.begin(wallet.getAddress().substring(0, 4));
 
     display.begin();
-    display.scrollText(WiFi.macAddress());
+    display.scrollText_nom(WiFi.macAddress());
     
     Serial.print("starting wifi connection: ");
 
@@ -167,7 +167,7 @@ void loop() {
     String data_to_send = ciphertext_str;
 
     httpEth.sendData("{\"data\": \"" + data_to_send + "\"}");
-
+    display.parpadeo(WiFi.macAddress());
     }
 
     num++;

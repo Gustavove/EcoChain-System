@@ -18,6 +18,10 @@ class OLED {
         OLED();
         void begin();
         void scrollText(String);
+        void scrollText_nom(String);
+        void parpadeo(String);
+        void gateway();
+        void gateway_parpadeo(String);
 };
 
 #endif
