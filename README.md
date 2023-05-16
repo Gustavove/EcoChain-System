@@ -3,8 +3,6 @@ EcoChain System is a system based on an IoT, IPFS and blockchain architecture fo
 
 The following code is based on a prototype, and its usage should be used in a testing environment.
 
-## Arquitecture
-
 ## Table of Contents
 
 - [Technologies and frameworks](#technologies-and-frameworks)
